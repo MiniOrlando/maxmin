@@ -1,7 +1,7 @@
 {
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon serv.js"
   },
   "dependencies": {
     "bootstrap": "^5.3.2",

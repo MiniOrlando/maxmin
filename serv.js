@@ -12,7 +12,9 @@ var pagesRouter = require('./routes/pages');
 
 app.set('maxmin/views', path.join(__dirname, 'maxmin/views'));
 app.set('view engine', 'ejs');
-console.log(path);
+console.log('dirname: '+path.join(__dirname));
+console.log('dirname: '+path.join(__dirname, 'views'));
+console.log('public: '+path.join(__dirname, '../public_maxmin/'));
 app.use(express.static(path.join(__dirname, '../public_maxmin/')));
 app.use(express.static('maxmin/views'));
 
