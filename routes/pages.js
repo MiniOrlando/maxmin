@@ -13,5 +13,7 @@ router.post('/getProductDataById', pagesController.getProductDataById);
 router.post('/editarDatosMM', pagesController.editarDatosMM);
 router.post('/guardarDatosMM', pagesController.guardarDatosMM);
 router.post('/eliminarDatosMM', pagesController.eliminarDatosMM);
+router.post('/getProductsCaptura', pagesController.getProductsCaptura);
+router.post('/storeProductCaptura', pagesController.storeProductCaptura);
 
 module.exports = router;

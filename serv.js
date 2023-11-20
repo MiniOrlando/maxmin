@@ -12,9 +12,6 @@ var pagesRouter = require('./routes/pages');
 
 app.set('maxmin/views', path.join(__dirname, 'maxmin/views'));
 app.set('view engine', 'ejs');
-console.log('dirname: '+path.join(__dirname));
-console.log('dirname: '+path.join(__dirname, 'views'));
-console.log('public: '+path.join(__dirname, '../public_maxmin/'));
 app.use(express.static(path.join(__dirname, '../public_maxmin/')));
 app.use(express.static('maxmin/views'));
 
@@ -59,5 +56,5 @@ app.use(function(err, req, res, next) {
 
 app.set('trust proxy', true);
 app.listen(3003, function () {
-    console.log("Server is running on localhost:3002");
+    console.log("Server is running on 172.16.4.187:3003");
 });
