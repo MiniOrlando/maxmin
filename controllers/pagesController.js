@@ -11,7 +11,8 @@ module.exports={
             new conexion.Request()
             .input('sucursal', req.session.sucursal)
             .input('dateToConsult', dateToConsult)
-            .query('SELECT * FROM cap_maxmin WHERE sucursal = @sucursal AND fec_cre >= @dateToConsult', async(error, results) => {
+            .query(`SELECT * FROM cap_maxmin 
+                    WHERE sucursal = @sucursal AND estatus IN ('0', '3') AND fec_cre >= @dateToConsult`, async(error, results) => {
                 data = {
                     nombre_lar: req.session.nombre_lar,
                     puesto: req.session.puesto,
@@ -99,7 +100,8 @@ module.exports={
                             .input('usr', nombre_lar)
                             .input('dateToConsult', dateToConsult)
 			                .input('sucursal', sucursal)
-                            .query('SELECT * FROM cap_maxmin WHERE sucursal = @sucursal AND fec_cre >= @dateToConsult', async(error, results) => {
+                            .query(`SELECT * FROM cap_maxmin 
+                                    WHERE sucursal = @sucursal AND estatus IN ('0', '3') AND fec_cre >= @dateToConsult`, async(error, results) => {
                                 data = {
                                     nombre_lar: nombre_lar,
                                     puesto: puesto,
@@ -137,7 +139,8 @@ module.exports={
             .input('usr', req.session.nombre_lar)
             .input('dateToConsult', dateToConsult)
 	        .input('sucursal', req.session.sucursal)
-            .query('SELECT * FROM cap_maxmin WHERE sucursal = @sucursal AND fec_cre >= @dateToConsult', async(error, results) => {
+            .query(`SELECT * FROM cap_maxmin 
+                    WHERE sucursal = @sucursal AND estatus IN ('0', '3') AND fec_cre >= @dateToConsult`, async(error, results) => {
                 data = {
                     nombre_lar: req.session.nombre_lar,
                     puesto: req.session.puesto,
@@ -546,7 +549,7 @@ module.exports={
                     SET usr_cre = @usr, cta_bsc = @canasta, art_cat_serv = @catalogo, 
                     max_cjs_c = @maxCjsC, min_cjs_c = @minCjsC,
                     max_cjs_m = @maxCjsM, min_pzs_m = @minPzsM,
-                    fec_cre = @date
+                    fec_cre = @date, estatus = '3'
                     WHERE cve_art = @codigo AND sucursal = @sucursal AND fec_cre >= @dateToConsult`, async(err, result) => {
                 console.log('Se actualizó, creo');
                 console.log(result);
@@ -580,7 +583,8 @@ module.exports={
             .input('codigo', codigo.trim())
             .input('sucursal', req.session.sucursal)
             .input('dateToConsult', dateToConsult)
-            .query(`DELETE FROM cap_maxmin 
+            .query(`UPDATE cap_maxmin 
+                    SET estatus = '4'
                     WHERE cve_art = @codigo AND sucursal = @sucursal AND fec_cre >= @dateToConsult`, async(err, result) => {
                 console.log('Se eliminó, creo');
                 console.log(result);
@@ -595,6 +599,21 @@ module.exports={
                 }
                 res.send({data:data});
             });
+            /*.query(`DELETE FROM cap_maxmin 
+                    WHERE cve_art = @codigo AND sucursal = @sucursal AND fec_cre >= @dateToConsult`, async(err, result) => {
+                console.log('Se eliminó, creo');
+                console.log(result);
+                const data = {
+                    nombre_lar: req.session.nombre_lar,
+                    puesto: req.session.puesto,
+                    sucursal: req.session.sucursal,
+                    alert: true,
+                    alertTitle: "¡Eliminado!",
+                    alertText: "Producto eliminado correctamente",
+                    alertIcon: "success"
+                }
+                res.send({data:data});
+            });*/
         } else {
             res.redirect('/maxmin/');
         }
@@ -609,14 +628,17 @@ module.exports={
             const almm = sucursal+"M";
             new conexion.Request()
             .input('type', type+'%')
-            .input('almc', almc)
-            .input('almm', almm)
             .query(`SELECT DISTINCT
-            iar.art CveArt, iar.lin Linea, iars.sub_alm SubAlm, iar.des1 Descripcion, iars.existencia Existencia
-            FROM inviar iar
-            JOIN invars iars ON iar.art = iars.cve_art
-            WHERE iar.des1 LIKE @type AND iars.sub_alm IN (@almc, @almm) AND iar.lin IN ('ALIM', 'PERE')
-            ORDER BY iar.art ASC`, async (error, results) => {
+                    iar.art CveArt, iar.lin Linea, iar.des1 Descripcion
+                    FROM inviar iar
+                    JOIN invars iars ON iar.art = iars.cve_art
+                    WHERE iar.des1 LIKE @type 
+                    AND iar.des1 NOT LIKE 'PANTENE%' 
+                    AND iar.des1 NOT LIKE 'PAÑAL%' 
+                    AND iar.des1 NOT LIKE 'PAÑUELOS%' 
+                    AND iar.des1 NOT LIKE '%NO USAR%'
+                    AND iar.lin IN ('ALIM', 'PERE')
+                    ORDER BY iar.art ASC`, async (error, results) => {
                 if (results.rowsAffected > 1) {
                     res.send({
                         data:results.recordset,
@@ -638,8 +660,8 @@ module.exports={
     storeProductCaptura: function(req, res) {
         if (req.session.loggedin) {
             const product = req.body.product.split(' - ')[0];
-            const subAlm = req.body.product.split(' - ')[1];
-            const codigo = req.body.product.split(' - ')[2];
+            //const subAlm = req.body.product.split(' - ')[1];
+            const codigo = req.body.product.split(' - ')[1];
             const type = req.body.type;
             const quantity = req.body.quantity;
             var date = moment().format('YYYY-MM-DD HH:mm:ss');
@@ -647,15 +669,15 @@ module.exports={
             var dateToConsult = moment().format('YYYY-MM-DD');
             dateToConsult = dateToConsult.replace(/-/gi, '');
 
-            console.log(`product details: ${product} - ${subAlm} - ${type} - ${quantity}`);
+            console.log(`product details: ${product} - ${type} - ${quantity}`);
             console.log(`dates: ${date} - ${dateToConsult}`);
             
             new conexion.Request()
             .input('codigo', codigo)
-            .input('subalm', subAlm)
+            .input('sucursal', req.loggedin.sucursal)
             .input('dateToConsult', dateToConsult)
             .query(`SELECT * FROM cap_ped
-                    WHERE cve_art = @codigo AND sub_alm = @subAlm AND fec_cre >= @dateToConsult`,
+                    WHERE cve_art = @codigo AND sucursal = @sucursal AND fec_cre >= @dateToConsult`,
                     async (err, result) => {
                         if (result.rowsAffected != 0) {
                             res.send({hasStored: false, productExist: true});
@@ -666,10 +688,9 @@ module.exports={
                             .input('quantity', quantity)
                             .input('date', date)
                             .input('sucursal', req.session.sucursal)
-                            .input('subAlm', subAlm)
                             .input('usr', req.session.nombre_lar)
                             .input('codigo', codigo)
-                            .query('INSERT INTO cap_ped VALUES (@type, @description, @quantity, @date, @sucursal, @subAlm, @usr, @codigo)', async (error, results) => {
+                            .query('INSERT INTO cap_ped VALUES (@type, @description, @quantity, @date, @sucursal, null, @usr, @codigo)', async (error, results) => {
                                 console.log('Producto insertado');
                                 if (results.rowsAffected > 0) {
                                     res.send({hasStored: true, productExist: false});

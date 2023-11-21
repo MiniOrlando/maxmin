@@ -6,31 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
     <title>Capturador</title>
     <!-- BEGIN UBUNTU SERVER STYLES -->
-    <!--link href="../public_maxmin/src/assets/img/MAB_Logo.png" rel="icon" type="image/x-icon"/>
-    <link href="../public_maxmin/layouts/vertical-dark-menu/css/light/loader.css" rel="stylesheet" type="text/css" />
-    <link href="../public_maxmin/layouts/vertical-dark-menu/css/dark/loader.css" rel="stylesheet" type="text/css" />
-    <script src="../public_maxmin/layouts/vertical-dark-menu/loader.js"></script>
-    <link href="../public_maxmin/src/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-    <link href="../public_maxmin/layouts/vertical-dark-menu/css/light/plugins.css" rel="stylesheet" type="text/css" />
-    <link href="../public_maxmin/layouts/vertical-dark-menu/css/dark/plugins.css" rel="stylesheet" type="text/css" />
-    <link href="../public_maxmin/src/assets/css/light/scrollspyNav.css" rel="stylesheet" type="text/css" />
-    <link href="../public_maxmin/src/assets/css/light/forms/switches.css" rel="stylesheet" type="text/css" />
-    <link href="../public_maxmin/src/assets/css/dark/scrollspyNav.css" rel="stylesheet" type="text/css" />
-    <link href="../public_maxmin/src/assets/css/dark/forms/switches.css" rel="stylesheet" type="text/css" />
-    <link href="../public_maxmin/src/plugins/src/bootstrap-touchspin/jquery.bootstrap-touchspin.min.css" rel="stylesheet" type="text/css" />
-    <link href="../public_maxmin/src/assets/css/light/scrollspyNav.css" rel="stylesheet" type="text/css" />
-    <link href="../public_maxmin/src/plugins/css/light/bootstrap-touchspin/custom-jquery.bootstrap-touchspin.min.css" rel="stylesheet" type="text/css" />
-    <link href="../public_maxmin/src/assets/css/dark/scrollspyNav.css" rel="stylesheet" type="text/css" />
-    <link href="../public_maxmin/src/plugins/css/dark/bootstrap-touchspin/custom-jquery.bootstrap-touchspin.min.css" rel="stylesheet" type="text/css" />
-    <link href="../public_maxmin/src/plugins/src/vanillaSelectBox/vanillaSelectBox.css" rel="stylesheet" type="text/css" />
-    <link href="../public_maxmin/src/assets/css/light/scrollspyNav.css" rel="stylesheet" type="text/css" />
-    <link href="../public_maxmin/src/plugins/css/light/vanillaSelectBox/custom-vanillaSelectBox.css" rel="stylesheet" type="text/css" />
-    <link href="../public_maxmin/src/assets/css/dark/scrollspyNav.css" rel="stylesheet" type="text/css" />
-    <link href="../public_maxmin/src/plugins/css/dark/vanillaSelectBox/custom-vanillaSelectBox.css" rel="stylesheet" type="text/css" />
-    <link href="../public_maxmin/src/assets/css/light/components/modal.css" rel="stylesheet" type="text/css" />
-    <link href="../public_maxmin/src/assets/css/light/apps/notes.css" rel="stylesheet" type="text/css" />
-    <link href="../public_maxmin/src/assets/css/dark/components/modal.css" rel="stylesheet" type="text/css" />
-    <link href="../public_maxmin/src/assets/css/dark/apps/notes.css" rel="stylesheet" type="text/css" /-->
     <link href="../public_maxmin/src/assets/img/MAB_Logo.png" rel="icon" type="image/x-icon"/>
     <link href="../public_maxmin/layouts/vertical-dark-menu/css/light/loader.css" rel="stylesheet" type="text/css" />
     <link href="../public_maxmin/layouts/vertical-dark-menu/css/dark/loader.css" rel="stylesheet" type="text/css" />
@@ -301,14 +276,33 @@
                                     <div id="ct" class="note-container note-grid">
                                         <% if(data.tabla.length > 0) { %>
                                             <% for (let i = 0; i < data.tabla.length; i++) { %>
-                                                <div class="note-item all-notes note-pan">
+
+                                                <% var date = new Date(data.tabla[i].fec_cre); %>
+                                                <% var day = date.getDate(); %>
+                                                <% var month = date.getMonth() + 1; %>
+                                                <% var year = date.getFullYear(); %>
+                                                <% day = (day < 10 ? "0" : "") + day; %>
+                                                <% month = (month < 10 ? "0" : "") + month; %>
+                                                <% var formattedDate = day + "/" + month + "/" + year;  %>
+
+                                                <% var url = ''; %>
+                                                <% var tipo = data.tabla[i].tipo_art.trim(); %>
+                                                <% if (tipo == 'pan') { %>
+                                                    <% url = 'panes/panes_500.png'; %>
+                                                <% } else if (tipo == 'fruta') { %>
+                                                    <% url = 'frutas/frutas_500.png'; %>
+                                                <% } else if (tipo == 'tortillas') { %>
+                                                    <% url = 'tortillas/tortillas_sueltas_500.png'; %>
+                                                <% } %>
+
+                                                <div class="note-item all-notes note-<%= tipo %> ">
                                                     <div class="note-inner-content">
                                                         <div class="note-content">
                                                             <p class="note-title" data-noteTitle="<%= data.tabla[i].tipo_art.trim() %>">Pedido <%= data.tabla[i].tipo_art.trim() %></p>
-                                                            <p class="meta-time"><%= data.tabla[i].fec_cre %></p>
+                                                            <p class="meta-time"><%= formattedDate %></p>
                                                             <div class="note-description-content text-center">
-                                                                <img src="../public_maxmin/src/assets/img/panes/bolillo_500.png" alt="" style="height: 8rem;">
-                                                                <!--img src="../src/assets/img/panes/bolillo_500.png" alt="" style="height: 8rem;"-->
+                                                                <img src="../public_maxmin/src/assets/img/<%= url %>" alt="" style="height: 8rem;">
+                                                                <!--img src="../src/assets/img/<%= url %>" alt="" style="height: 8rem;"-->
                                                                 <p class="note-description" data-noteDescription="<%= data.tabla[i].cant_ped.trim() %> <%= data.tabla[i].des_art.trim() %>"><%= data.tabla[i].cant_ped.trim() %> <%= data.tabla[i].des_art.trim() %></p>
                                                             </div>
                                                         </div>
@@ -320,7 +314,7 @@
                                                                 <a class="nav-link dropdown-toggle d-icon label-group" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="true">
                                                                     <div class="tags">
                                                                         <!--div class="g-dot-info"></div-->
-                                                                        <div class="g-dot-pan"></div>
+                                                                        <div class="g-dot-<%= tipo %>"></div>
                                                                         <!--div class="g-dot-secondary"></div>
                                                                         <div class="g-dot-fruta"></div-->
                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-vertical"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
