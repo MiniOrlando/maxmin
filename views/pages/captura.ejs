@@ -204,6 +204,15 @@
                     </li>
 
                     <li class="menu">
+                        <a href="./negada" aria-expanded="false" class="dropdown-toggle">
+                            <div class="">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-slash"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
+                                <span>Venta negada</span>
+                            </div>
+                        </a>
+                    </li>
+
+                    <li class="menu">
                         <a href="./rebajas" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-dollar-sign"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
@@ -298,12 +307,12 @@
                                                 <div class="note-item all-notes note-<%= tipo %> ">
                                                     <div class="note-inner-content">
                                                         <div class="note-content">
-                                                            <p class="note-title" data-noteTitle="<%= data.tabla[i].tipo_art.trim() %>">Pedido <%= data.tabla[i].tipo_art.trim() %></p>
+                                                            <p class="note-title" data-noteTitle="<%= data.tabla[i].tipo_art.trim() %>">Pedido # <%= data.tabla[i].id %></p>
                                                             <p class="meta-time"><%= formattedDate %></p>
                                                             <div class="note-description-content text-center">
-                                                                <img src="../public_maxmin/src/assets/img/<%= url %>" alt="" style="height: 8rem;">
+                                                                <img src="../src/assets/img/<%= url %>" alt="" style="height: 8rem;">
                                                                 <!--img src="../src/assets/img/<%= url %>" alt="" style="height: 8rem;"-->
-                                                                <p class="note-description" data-noteDescription="<%= data.tabla[i].cant_ped.trim() %> <%= data.tabla[i].des_art.trim() %>"><%= data.tabla[i].cant_ped.trim() %> <%= data.tabla[i].des_art.trim() %></p>
+                                                                <p class="note-description" data-noteDescription="<%= data.tabla[i].cant_ped.trim() %> <%= data.tabla[i].des_art.trim() %>"><b><%= data.tabla[i].cant_ped.trim() %> <%= data.tabla[i].factor %> </b> <br> <%= data.tabla[i].des_art.trim() %></p>
                                                             </div>
                                                         </div>
                                                         <div class="note-action">
@@ -439,8 +448,9 @@
     <script src="../public_maxmin/src/plugins/src/bootstrap-touchspin/custom-bootstrap-touchspin.js"></script>
     <script src="../public_maxmin/scripts/searchTypeCaptura.js"></script>
     <script src="../public_maxmin/scripts/storePedido.js"></script>
+    <script src="../public_maxmin/scripts/delete-pedido.js"></script>
     <!--script src="../public_maxmin/scripts/delete-maxmin.js"></script-->
-        <!-- END UBUNTU SERVER SCRIPTS -->
+    <!-- END UBUNTU SERVER SCRIPTS -->
 
     <!-- BEGIN DEV LOCAL SCRIPTS -->
     <!--script src="../src/plugins/src/global/vendors.min.js"></script>
@@ -454,7 +464,8 @@
     <script src="../src/plugins/src/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js"></script>
     <script src="../src/plugins/src/bootstrap-touchspin/custom-bootstrap-touchspin.js"></script>
     <script src="../scripts/searchTypeCaptura.js"></script>
-    <script src="../scripts/storePedido.js"></script-->
+    <script src="../scripts/storePedido.js"></script>
+    <script src="../scripts/delete-pedido.js"></script-->
     <!-- END DEV LOCAL SCRIPTS -->
 </body>
 </html>

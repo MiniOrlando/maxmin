@@ -6,6 +6,7 @@ const pagesController = require("../controllers/pagesController")
 router.get('/maxmin', pagesController.maxmin);
 router.post('/maxmin', pagesController.auth);
 router.get('/captura', pagesController.captura);
+router.get('/negada', pagesController.negada);
 router.get('/rebajas', pagesController.rebajas);
 router.post('/getProductData', pagesController.getProductData);
 router.post('/getTopTenProductsData', pagesController.getTopTenProductsData);
@@ -15,5 +16,8 @@ router.post('/guardarDatosMM', pagesController.guardarDatosMM);
 router.post('/eliminarDatosMM', pagesController.eliminarDatosMM);
 router.post('/getProductsCaptura', pagesController.getProductsCaptura);
 router.post('/storeProductCaptura', pagesController.storeProductCaptura);
+router.post('/deleteProductCaptura', pagesController.deleteProductCaptura);
+router.post('/searchProductVentaNegada', pagesController.searchProductVentaNegada);
+router.post('/storeVentaNegada', pagesController.storeVentaNegada);
 
 module.exports = router;

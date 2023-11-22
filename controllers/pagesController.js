@@ -140,7 +140,10 @@ module.exports={
             .input('dateToConsult', dateToConsult)
 	        .input('sucursal', req.session.sucursal)
             .query(`SELECT * FROM cap_maxmin 
-                    WHERE sucursal = @sucursal AND estatus IN ('0', '3') AND fec_cre >= @dateToConsult`, async(error, results) => {
+                    WHERE sucursal = @sucursal 
+                    AND estatus IN ('0', '3') 
+                    AND fec_cre >= @dateToConsult
+                    ORDER BY ID`, async(error, results) => {
                 data = {
                     nombre_lar: req.session.nombre_lar,
                     puesto: req.session.puesto,
@@ -163,7 +166,11 @@ module.exports={
             .input('usr', req.session.nombre_lar)
             .input('dateToConsult', dateToConsult)
 	        .input('sucursal', req.session.sucursal)
-            .query('SELECT * FROM cap_ped WHERE sucursal = @sucursal AND fec_cre >= @dateToConsult', async(error, results) => {
+            .query(`SELECT * FROM cap_ped 
+                    WHERE sucursal = @sucursal 
+                    AND estatus IN ('0', '3') 
+                    AND fec_cre >= @dateToConsult
+                    ORDER BY id`, async(error, results) => {
                 data = {
                     nombre_lar: req.session.nombre_lar,
                     puesto: req.session.puesto,
@@ -178,6 +185,18 @@ module.exports={
                 puesto: req.session.puesto
             }
             res.render('pages/captura', {data:data});*/
+        } else {
+            res.redirect('/maxmin/');
+        }
+    },
+
+    negada:function (req,res) {
+        if(req.session.loggedin) {
+            data = {
+                nombre_lar: req.session.nombre_lar,
+                puesto: req.session.puesto
+            }
+            res.render('pages/negada');
         } else {
             res.redirect('/maxmin/');
         }
@@ -575,16 +594,17 @@ module.exports={
             const codigo = req.body.cCodigo;
             var dateToConsult = moment().format('YYYY-MM-DD');
             dateToConsult = dateToConsult.replace(/-/gi, '');
-            console.log(dateToConsult);
-            console.log("codigo: "+codigo.trim());
-            console.log("------");
+            //console.log(dateToConsult);
+            //console.log("codigo: "+codigo.trim());
+            //console.log("------");
 
             new conexion.Request()
             .input('codigo', codigo.trim())
             .input('sucursal', req.session.sucursal)
+            .input('usr', req.session.nombre_lar)
             .input('dateToConsult', dateToConsult)
             .query(`UPDATE cap_maxmin 
-                    SET estatus = '4'
+                    SET estatus = '4', usr_cre = @usr
                     WHERE cve_art = @codigo AND sucursal = @sucursal AND fec_cre >= @dateToConsult`, async(err, result) => {
                 console.log('Se eliminó, creo');
                 console.log(result);
@@ -651,7 +671,7 @@ module.exports={
                     });
                 }
                 
-            })
+            });
         } else {
             res.redirect('/maxmin/');
         }
@@ -663,25 +683,33 @@ module.exports={
             //const subAlm = req.body.product.split(' - ')[1];
             const codigo = req.body.product.split(' - ')[1];
             const type = req.body.type;
+            const factor = req.body.factor;
             const quantity = req.body.quantity;
             var date = moment().format('YYYY-MM-DD HH:mm:ss');
             console.log(date);
             var dateToConsult = moment().format('YYYY-MM-DD');
             dateToConsult = dateToConsult.replace(/-/gi, '');
 
-            console.log(`product details: ${product} - ${type} - ${quantity}`);
+            console.log(`product details: ${product} - ${codigo} - ${type} - ${quantity}`);
             console.log(`dates: ${date} - ${dateToConsult}`);
+            console.log(`sucursal: ${req.session.sucursal}`);
             
             new conexion.Request()
             .input('codigo', codigo)
-            .input('sucursal', req.loggedin.sucursal)
+            .input('sucursal', req.session.sucursal)
             .input('dateToConsult', dateToConsult)
             .query(`SELECT * FROM cap_ped
-                    WHERE cve_art = @codigo AND sucursal = @sucursal AND fec_cre >= @dateToConsult`,
+                    WHERE cve_art = @codigo 
+                    AND estatus IN ('0', '3') 
+                    AND sucursal = @sucursal 
+                    AND fec_cre >= @dateToConsult`,
                     async (err, result) => {
-                        if (result.rowsAffected != 0) {
+                        console.log('result');
+                        console.log(result);
+                        if (result.rowsAffected != 0 ) {
                             res.send({hasStored: false, productExist: true});
                         } else {
+                            console.log('vamos bien');
                             new conexion.Request()
                             .input('type', type)
                             .input('description', product)
@@ -690,7 +718,9 @@ module.exports={
                             .input('sucursal', req.session.sucursal)
                             .input('usr', req.session.nombre_lar)
                             .input('codigo', codigo)
-                            .query('INSERT INTO cap_ped VALUES (@type, @description, @quantity, @date, @sucursal, null, @usr, @codigo)', async (error, results) => {
+                            .input('factor', factor)
+                            .query(`INSERT INTO cap_ped 
+                                    VALUES (@type, @description, @quantity, @date, @sucursal, @usr, @codigo, @factor, '0')`, async (error, results) => {
                                 console.log('Producto insertado');
                                 if (results.rowsAffected > 0) {
                                     res.send({hasStored: true, productExist: false});
@@ -698,6 +728,134 @@ module.exports={
                                     res.send({hasStored: false, productExist: false});
                                 }
                             });
+                        }
+
+                        if (err) {
+                            console.log('oh rayos!');
+                            console.log(err)
+                        }
+                    });
+        } else {
+            res.redirect('/maxmin/');
+        }
+    },
+
+    deleteProductCaptura: function(req, res) {
+        if (req.session.loggedin) {
+            console.log('entrando en el método para eliminar datos de pedido');
+            const id = req.body.id;
+            var dateToConsult = moment().format('YYYY-MM-DD');
+            dateToConsult = dateToConsult.replace(/-/gi, '');
+
+            new conexion.Request()
+            .input('id', id)
+            .input('sucursal', req.session.sucursal)
+            .input('usr', req.session.nombre_lar)
+            .input('dateToConsult', dateToConsult)
+            .query(`UPDATE cap_ped
+                    SET estatus = '4', usr = @usr
+                    WHERE id = @id`, async(err, result) => {
+                        console.log('se eliminó');
+                        console.log(result);
+                        const data = {
+                            nombre_lar: req.session.nombre_lar,
+                            puesto: req.session.puesto,
+                            sucursal: req.session.sucursal,
+                            alert: true,
+                            alertTitle: "¡Eliminado!",
+                            alertText: "Producto eliminado correctamente",
+                            alertIcon: "success"
+                        }
+                        res.send({data:data});
+                    });
+        } else {
+            res.redirect('/maxmin/');
+        }
+    },
+
+    searchProductVentaNegada: function(req, res) {
+        if (req.session.loggedin) {
+            // OBTENEMOS VALORES CODIGO Y SUCURSAL PARA REALIZAR BÚSQUEDA
+            const sucursal = req.session.sucursal;
+            const product = req.body.searchValue;
+            // CONFIGURAMOS ALMC, ALMM Y CODE PARA QUE FUNCIONEN COMO CALUSULAS WHERE PARA DEFINIR LA BÚSQUEDA
+            //const almC = sucursal+"C";
+            //const almM = sucursal+"M";
+            var code = product+"%";
+            // ACCEDEMOS A LA DB PARA OBTENER DATOS
+            new conexion.Request()
+            .input('code', code)
+            .input('sucursal', sucursal)
+            .query(`SELECT DISTINCT TOP 10
+                    iar.art CveArt, iars.alm Almacen, iar.lin Linea, iar.des1 Descripcion
+                    FROM inviar iar
+                    JOIN invart iart ON iar.art = iart.art
+                    JOIN invars iars ON iar.art = iars.cve_art
+                    WHERE iars.alm = @sucursal AND (iar.art LIKE @code OR iar.des1 LIKE @code)
+                    ORDER BY iar.art ASC`, async(error, results) => {
+                // SI HEMOS OBTENIDO 1 O MÁS RESULTADOS EN NUESTRA BÚQUEDA, ENVIAMOS INFORMACIÓN
+                if (results.rowsAffected>0) {
+                    console.log("4. results: ");
+                    console.log(results);
+                    res.send({data:results.recordset, hasData: true});
+                } else {
+                    //TODO: Enviar un SweetAlert que diga "Sin existencias"
+                }
+            });
+        } else {
+            res.redirect('/maxmin/');
+        }
+    },
+
+    storeVentaNegada: function(req, res) {
+        if (req.session.loggedin) {
+            const product = req.body.des_art;
+            const codigo = req.body.cve_art;
+            const usr = req.session.nombre_lar;
+            const sucursal = req.session.sucursal;
+            var date = moment().format('YYYY-MM-DD HH:mm:ss');
+            var dateToConsult = moment().format('YYYY-MM-DD');
+            dateToConsult = dateToConsult.replace(/-/gi, '');
+
+            console.log(`product details: ${product} - ${usr} - ${sucursal}`);
+            console.log(`dates: ${date} - ${dateToConsult}`);
+            
+            new conexion.Request()
+            .input('codigo', codigo)
+            .input('sucursal', req.session.sucursal)
+            .input('dateToConsult', dateToConsult)
+            .query(`SELECT * FROM cap_neg
+                    WHERE cve_art = @codigo 
+                    AND estatus IN ('0', '3') 
+                    AND sucursal = @sucursal 
+                    AND fec_cre >= @dateToConsult`,
+                    async (err, result) => {
+                        console.log('result');
+                        console.log(result);
+                        if (result.rowsAffected != 0 ) {
+                            res.send({hasStored: false, productExist: true});
+                        } else {
+                            console.log('vamos bien');
+                            new conexion.Request()
+                            .input('codigo', codigo)
+                            .input('description', product)
+                            .input('date', date)
+                            .input('sucursal', sucursal)
+                            .input('usr', usr)
+                            .query(`INSERT INTO cap_neg
+                                    VALUES (@description, @date, @usr, @sucursal, '0', @codigo)`, async (error, results) => {
+                                console.log('Venta negada insertada');
+                                if (results.rowsAffected > 0) {
+                                    res.send({hasStored: true, productExist: false});
+                                } else {
+                                    res.send({hasStored: false, productExist: false});
+                                }
+                            });
+                        }
+
+                        if (err) {
+                            console.log('oh rayos!');
+                            console.log(err)
                         }
                     });
         } else {
