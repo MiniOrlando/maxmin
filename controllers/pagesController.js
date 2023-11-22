@@ -230,14 +230,12 @@ module.exports={
             new conexion.Request()
             .input('code', code)
             .input('sucursal', sucursal)
-            .input('almc', almC)
-            .input('almm', almM)
-            .query(`SELECT DISTINCT TOP 5
-                    iar.art CveArt, iar.cve_lar Barcode, iars.alm Almacen, iars.sub_alm SubAlm, iar.lin Linea, iar.des1 Descripcion
+            .query(`SELECT DISTINCT TOP 1
+                    iar.art CveArt, iar.cve_lar Barcode, iars.alm Almacen, iar.lin Linea, iar.des1 Descripcion
                     FROM inviar iar
                     JOIN invart iart ON iar.art = iart.art
                     JOIN invars iars ON iar.art = iars.cve_art
-                    WHERE iars.alm = @sucursal AND iars.sub_alm IN (@almc, @almm) AND (iar.art LIKE @code OR iar.des1 LIKE @code OR iar.cve_lar LIKE @code)
+                    WHERE iars.alm = @sucursal AND (iar.art LIKE @code OR iar.des1 LIKE @code OR iar.cve_lar LIKE @code)
                     ORDER BY iar.art ASC`, async(error, results) => {
                 // SI HEMOS OBTENIDO 1 O MÁS RESULTADOS EN NUESTRA BÚQUEDA, CONTINUAMOS, CASO CONTRARIO ES QUE NO HAY COINCIDENCIAS
                 console.log('seguimos bien');
@@ -256,7 +254,10 @@ module.exports={
                     // CREAMOS UNA NUEVA CONSULTA PARA SABER LA VENTA PROMEDIO
                     new conexion.Request()
                     .input('codigo', dataTemp.codigo)
-                    .query(`SELECT * FROM resumendos WHERE Codigo = @codigo`, async(error, results) => {
+                    .input('almc', almC)
+                    .input('almm', almM)
+                    .query(`SELECT * FROM resumendos 
+                            WHERE Codigo = @codigo AND subalm IN (@almc, @almm)`, async(error, results) => {
                         console.log('y todo sigue bien');
                         // SI OBTENEMOS MÁS DE UN RESULTADO ES PORQUE TIENE VALORES EN ALMACÉN C Y M
                         if (results.rowsAffected > 1) {
@@ -355,7 +356,7 @@ module.exports={
             if (results.rowsAffected>0) {
                 console.log('rowsAffected > 0');
                 console.log("4. results: ");
-                console.log(results);
+                //console.log(results);
                 // DEFINIMOS VARIABLE CON DATOS QUE OCUPAREMOS MÁS ADELANTE
                 const data = {
                     productos: results.recordset,
