@@ -45,7 +45,7 @@ module.exports={
                     console.log("Usuario y contraseña no vacíos");
                     new conexion.Request()
                     .input('user', user)
-                    .query('SELECT * FROM tcausr WHERE nombre = @user', async (error, results) => {
+                    .query(`SELECT * FROM tcausr WHERE nombre = @user AND puesto != 'BAJA'`, async (error, results) => {
 
                         //SI NO EXISTE EL USUARIO O LA CONTRASEÑA NO COINCIDE RECARGA LOGIN CON UNA ALERTA
                         if(results.recordset.length == 0 || contraseña != results.recordsets[0][0].pwd.trim()){
@@ -281,7 +281,8 @@ module.exports={
                                 barcode: dataTemp.barcode,
                                 almacen: dataTemp.almacen,
                                 productos: dataTemp.productos,
-                                promedio: promedio
+                                promedio: promedio,
+                                hasData: true
                             }
                             // ENVIAMOS LA INFORMACIÓN
                             res.send({data:data});
@@ -298,7 +299,8 @@ module.exports={
                                 barcode: dataTemp.barcode,
                                 almacen: dataTemp.almacen,
                                 productos: dataTemp.productos,
-                                promedio: results.recordsets[0][0].PromUnidades
+                                promedio: results.recordsets[0][0].PromUnidades,
+                                hasData: true
                             }
                             // ENVIAMOS LA INFORMACIÓN
                             res.send({data:data});
@@ -309,6 +311,15 @@ module.exports={
                     //res.send({data:data});
                 } else {
                     //TODO: Enviar un SweetAlert que diga "Sin existencias"
+                    const data = {
+                        nombre_lar: req.session.nombre_lar,
+                        puesto: req.session.puesto,
+                        sucursal: req.session.sucursal,
+                        hasData: false
+                    }
+                    // ENVIAMOS LA INFORMACIÓN
+                    res.send({data:data});
+                    return next();
                 }
             });
         } catch (error) {
