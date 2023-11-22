@@ -319,7 +319,6 @@ module.exports={
                     }
                     // ENVIAMOS LA INFORMACIÓN
                     res.send({data:data});
-                    return next();
                 }
             });
         } catch (error) {
