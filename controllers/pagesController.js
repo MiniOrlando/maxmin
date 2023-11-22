@@ -228,12 +228,11 @@ module.exports={
         .input('sucursal', sucursal)
         .input('almc', almC)
         .input('almm', almM)
-        .query(`SELECT DISTINCT TOP 10
-                iar.art CveArt, iar.cve_lar Barcode, iars.alm Almacen, iars.sub_alm SubAlm, iar.lin Linea, iar.des1 Descripcion
+        .query(`SELECT DISTINCT TOP 6
+                iar.art CveArt, iars.alm Almacen, iar.des1 Descripcion
                 FROM inviar iar
-                JOIN invart iart ON iar.art = iart.art
                 JOIN invars iars ON iar.art = iars.cve_art
-                WHERE iars.alm = @sucursal AND iars.alm IN (@almc, @almm) AND (iar.art LIKE @code OR iar.des1 LIKE @code OR iar.cve_lar LIKE @code)
+                WHERE iars.alm = @sucursal AND (iar.art LIKE @code OR iar.des1 LIKE @code OR iar.cve_lar LIKE @code)
                 ORDER BY iar.art ASC`, async(error, results) => {
             // SI HEMOS OBTENIDO 1 O MÁS RESULTADOS EN NUESTRA BÚQUEDA, CONTINUAMOS, CASO CONTRARIO ES QUE NO HAY COINCIDENCIAS
             if (results.rowsAffected>0) {
