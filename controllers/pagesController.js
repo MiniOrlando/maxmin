@@ -214,108 +214,104 @@ module.exports={
         }
     },
 
-    getProductData: function(req, res) {
-        // OBTENEMOS VALORES CODIGO Y SUCURSAL PARA REALIZAR BÚSQUEDA
-        const sucursal = req.session.sucursal;
-        const codigo = req.body.searchValue;
-        // CONFIGURAMOS ALMC, ALMM Y CODE PARA QUE FUNCIONEN COMO CALUSULAS WHERE PARA DEFINIR LA BÚSQUEDA
-        const almC = sucursal+"C";
-        const almM = sucursal+"M";
-        var code = codigo+"%";
-        // ACCEDEMOS A LA DB PARA OBTENER DATOS
-        new conexion.Request()
-        .input('code', code)
-        .input('sucursal', sucursal)
-        .input('almc', almC)
-        .input('almm', almM)
-        .query(`SELECT DISTINCT TOP 5
-                iar.art CveArt, iar.cve_lar Barcode, iars.alm Almacen, iars.sub_alm SubAlm, iar.lin Linea, iar.des1 Descripcion
-                FROM inviar iar
-                JOIN invart iart ON iar.art = iart.art
-                JOIN invars iars ON iar.art = iars.cve_art
-                WHERE iars.alm = @sucursal AND iars.alm IN (@almc, @almm) AND (iar.art LIKE @code OR iar.des1 LIKE @code OR iar.cve_lar LIKE @code)
-                ORDER BY iar.art ASC`, async(error, results) => {
-            // SI HEMOS OBTENIDO 1 O MÁS RESULTADOS EN NUESTRA BÚQUEDA, CONTINUAMOS, CASO CONTRARIO ES QUE NO HAY COINCIDENCIAS
-            if (results.rowsAffected>0) {
-                console.log("4. results: ");
-                console.log(results);
-                // DEFINIMOS VARIABLE CON DATOS QUE OCUPAREMOS MÁS ADELANTE
-                const dataTemp = {
-                    codigo: results.recordsets[0][0].CveArt,
-                    existenciaAlmC: results.recordsets[0][0].Existencia,
-                    descripcion: results.recordsets[0][0].Descripcion.trim(),
-                    barcode: results.recordsets[0][0].Barcode.trim(),
-                    almacen: results.recordsets[0][0].Almacen.trim(),
-                    productos: results.recordset
-                }
-                // CREAMOS UNA NUEVA CONSULTA PARA SABER LA VENTA PROMEDIO
-                new conexion.Request()
-                .input('codigo', dataTemp.codigo)
-                .query(`SELECT * FROM resumendos WHERE Codigo = @codigo`, async(error, results) => {
+    getProductData: function(req, res, next) {
+        try {
+            // OBTENEMOS VALORES CODIGO Y SUCURSAL PARA REALIZAR BÚSQUEDA
+            const sucursal = req.session.sucursal;
+            const codigo = req.body.searchValue;
+            // CONFIGURAMOS ALMC, ALMM Y CODE PARA QUE FUNCIONEN COMO CALUSULAS WHERE PARA DEFINIR LA BÚSQUEDA
+            const almC = sucursal+"C";
+            const almM = sucursal+"M";
+            var code = codigo+"%";
+            // ACCEDEMOS A LA DB PARA OBTENER DATOS
+            new conexion.Request()
+            .input('code', code)
+            .input('sucursal', sucursal)
+            .input('almc', almC)
+            .input('almm', almM)
+            .query(`SELECT DISTINCT TOP 5
+                    iar.art CveArt, iar.cve_lar Barcode, iars.alm Almacen, iars.sub_alm SubAlm, iar.lin Linea, iar.des1 Descripcion
+                    FROM inviar iar
+                    JOIN invart iart ON iar.art = iart.art
+                    JOIN invars iars ON iar.art = iars.cve_art
+                    WHERE iars.alm = @sucursal AND iars.alm IN (@almc, @almm) AND (iar.art LIKE @code OR iar.des1 LIKE @code OR iar.cve_lar LIKE @code)
+                    ORDER BY iar.art ASC`, async(error, results) => {
+                // SI HEMOS OBTENIDO 1 O MÁS RESULTADOS EN NUESTRA BÚQUEDA, CONTINUAMOS, CASO CONTRARIO ES QUE NO HAY COINCIDENCIAS
+                if (results.rowsAffected>0) {
+                    console.log("4. results: ");
                     console.log(results);
-                    if (error) {
-                        const data = {
-                            nombre_lar: req.session.nombre_lar,
-                            puesto: req.session.puesto,
-                            sucursal: req.session.sucursal,
-                            codigo: '0',
-                            existenciaAlmC: '0',
-                            descripcion: '0',
-                            barcode: '0',
-                            almacen: '0',
-                            productos: '0',
-                            promedio: '0'
-                        }
-                        // ENVIAMOS LA INFORMACIÓN
-                        res.send({data:data});
+                    // DEFINIMOS VARIABLE CON DATOS QUE OCUPAREMOS MÁS ADELANTE
+                    const dataTemp = {
+                        codigo: results.recordsets[0][0].CveArt,
+                        existenciaAlmC: results.recordsets[0][0].Existencia,
+                        descripcion: results.recordsets[0][0].Descripcion.trim(),
+                        barcode: results.recordsets[0][0].Barcode.trim(),
+                        almacen: results.recordsets[0][0].Almacen.trim(),
+                        productos: results.recordset
                     }
-                    // SI OBTENEMOS MÁS DE UN RESULTADO ES PORQUE TIENE VALORES EN ALMACÉN C Y M
-                    if (results.rowsAffected > 1) {
-                        var datos = results.recordsets;
-                        console.log('datos');
-                        console.log(datos);
-                        // SUMAMOS LOS VALORES EN ALMACÉN C Y M PARA OBTENER EL PROMEDIO FINAL
-                        var promedio = results.recordsets[0][0].PromUnidades + results.recordsets[0][1].PromUnidades;
-                        promedio = Math.round(promedio * 10000) / 10000;
-                        // CREAMOS UNA VARIABLE DATA CON TODA LA INFORMACIÓN
-                        const data = {
-                            nombre_lar: req.session.nombre_lar,
-                            puesto: req.session.puesto,
-                            sucursal: req.session.sucursal,
-                            codigo: dataTemp.codigo,
-                            existenciaAlmC: dataTemp.existenciaAlmC,
-                            descripcion: dataTemp.descripcion,
-                            barcode: dataTemp.barcode,
-                            almacen: dataTemp.almacen,
-                            productos: dataTemp.productos,
-                            promedio: promedio
+                    // CREAMOS UNA NUEVA CONSULTA PARA SABER LA VENTA PROMEDIO
+                    new conexion.Request()
+                    .input('codigo', dataTemp.codigo)
+                    .query(`SELECT * FROM resumendos WHERE Codigo = @codigo`, async(error, results) => {
+                        console.log(results);
+                        if(!results) {
+                            return next();
                         }
-                        // ENVIAMOS LA INFORMACIÓN
-                        res.send({data:data});
-                    // SI SÓLO ES UN RESULTADO ES PORQUE SÓLO TIENEN VALORES EN C Ó EN M, APLICAMOS DIRECTO EL VALOR
-                    } else if (results.rowsAffected == 1) {
-                        const data = {
-                            nombre_lar: req.session.nombre_lar,
-                            puesto: req.session.puesto,
-                            sucursal: req.session.sucursal,
-                            codigo: dataTemp.codigo,
-                            existenciaAlmC: dataTemp.existenciaAlmC,
-                            descripcion: dataTemp.descripcion,
-                            barcode: dataTemp.barcode,
-                            almacen: dataTemp.almacen,
-                            productos: dataTemp.productos,
-                            promedio: results.recordsets[0][0].PromUnidades
+                        
+                        // SI OBTENEMOS MÁS DE UN RESULTADO ES PORQUE TIENE VALORES EN ALMACÉN C Y M
+                        if (results.rowsAffected > 1) {
+                            var datos = results.recordsets;
+                            console.log('datos');
+                            console.log(datos);
+                            // SUMAMOS LOS VALORES EN ALMACÉN C Y M PARA OBTENER EL PROMEDIO FINAL
+                            var promedio = results.recordsets[0][0].PromUnidades + results.recordsets[0][1].PromUnidades;
+                            promedio = Math.round(promedio * 10000) / 10000;
+                            // CREAMOS UNA VARIABLE DATA CON TODA LA INFORMACIÓN
+                            const data = {
+                                nombre_lar: req.session.nombre_lar,
+                                puesto: req.session.puesto,
+                                sucursal: req.session.sucursal,
+                                codigo: dataTemp.codigo,
+                                existenciaAlmC: dataTemp.existenciaAlmC,
+                                descripcion: dataTemp.descripcion,
+                                barcode: dataTemp.barcode,
+                                almacen: dataTemp.almacen,
+                                productos: dataTemp.productos,
+                                promedio: promedio
+                            }
+                            // ENVIAMOS LA INFORMACIÓN
+                            res.send({data:data});
+                            return next();
+                        // SI SÓLO ES UN RESULTADO ES PORQUE SÓLO TIENEN VALORES EN C Ó EN M, APLICAMOS DIRECTO EL VALOR
+                        } else if (results.rowsAffected == 1) {
+                            const data = {
+                                nombre_lar: req.session.nombre_lar,
+                                puesto: req.session.puesto,
+                                sucursal: req.session.sucursal,
+                                codigo: dataTemp.codigo,
+                                existenciaAlmC: dataTemp.existenciaAlmC,
+                                descripcion: dataTemp.descripcion,
+                                barcode: dataTemp.barcode,
+                                almacen: dataTemp.almacen,
+                                productos: dataTemp.productos,
+                                promedio: results.recordsets[0][0].PromUnidades
+                            }
+                            // ENVIAMOS LA INFORMACIÓN
+                            res.send({data:data});
+                            return next();
                         }
-                        // ENVIAMOS LA INFORMACIÓN
-                        res.send({data:data});
-                    }
-                });
-                //getPromedioVentas(data);
-                //res.send({data:data});
-            } else {
-                //TODO: Enviar un SweetAlert que diga "Sin existencias"
-            }
-        });
+                    });
+                    //getPromedioVentas(data);
+                    //res.send({data:data});
+                } else {
+                    //TODO: Enviar un SweetAlert que diga "Sin existencias"
+                }
+            });
+        } catch (error) {
+            console.log(error);
+            return next();
+        }
+        
     },
 
     getTopTenProductsData: function(req, res) {
