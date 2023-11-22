@@ -241,7 +241,7 @@ module.exports={
                 console.log('seguimos bien');
                 if (results.rowsAffected>0) {
                     console.log("5. results: ");
-                    console.log('rowAffected > 0');
+                    console.log('rowsAffected > 0');
                     // DEFINIMOS VARIABLE CON DATOS QUE OCUPAREMOS MÁS ADELANTE
                     const dataTemp = {
                         codigo: results.recordsets[0][0].CveArt,
@@ -264,7 +264,7 @@ module.exports={
                             console.log('aún bien');
                             //var datos = results.recordsets;
                             console.log('datos');
-                            console.log('rowAffected > 1');
+                            console.log('rowsAffected > 1');
                             // SUMAMOS LOS VALORES EN ALMACÉN C Y M PARA OBTENER EL PROMEDIO FINAL
                             var promedio = results.recordsets[0][0].PromUnidades + results.recordsets[0][1].PromUnidades;
                             promedio = Math.round(promedio * 10000) / 10000;
@@ -286,7 +286,7 @@ module.exports={
                             res.send({data:data});
                         // SI SÓLO ES UN RESULTADO ES PORQUE SÓLO TIENEN VALORES EN C Ó EN M, APLICAMOS DIRECTO EL VALOR
                         } else if (results.rowsAffected == 1) {
-                            console.log('rowAffected = 1');
+                            console.log('rowsAffected = 1');
                             const data = {
                                 nombre_lar: req.session.nombre_lar,
                                 puesto: req.session.puesto,
@@ -299,6 +299,16 @@ module.exports={
                                 productos: dataTemp.productos,
                                 promedio: results.recordsets[0][0].PromUnidades,
                                 hasData: true
+                            }
+                            // ENVIAMOS LA INFORMACIÓN
+                            res.send({data:data});
+                        } else {
+                            console.log('rowAffected < 1 || rowsAffected = 0');
+                            const data = {
+                                nombre_lar: req.session.nombre_lar,
+                                puesto: req.session.puesto,
+                                sucursal: req.session.sucursal,
+                                hasData: false
                             }
                             // ENVIAMOS LA INFORMACIÓN
                             res.send({data:data});
