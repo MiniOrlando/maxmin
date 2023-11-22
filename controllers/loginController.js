@@ -52,6 +52,7 @@ module.exports={
                 const contraseña = req.body.password+'';
                 contraseña = contraseña.toUpperCase();
                 console.log("Usuario: "+user+" Contraseña: "+contraseña);
+                console.log('si estoy en el servidor');
         
                 //COMPRUEBA EXISTENCIA DE DATOS Y DE ESTAR MAL RECARGA LA PÁGINA CON UNA ALERTA
                 if(!user || !contraseña){
