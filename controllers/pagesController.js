@@ -237,7 +237,7 @@ module.exports={
                     FROM inviar iar
                     JOIN invart iart ON iar.art = iart.art
                     JOIN invars iars ON iar.art = iars.cve_art
-                    WHERE iars.alm = @sucursal AND iars.alm IN (@almc, @almm) AND (iar.art LIKE @code OR iar.des1 LIKE @code OR iar.cve_lar LIKE @code)
+                    WHERE iars.alm = @sucursal AND iars.sub_alm IN (@almc, @almm) AND (iar.art LIKE @code OR iar.des1 LIKE @code OR iar.cve_lar LIKE @code)
                     ORDER BY iar.art ASC`, async(error, results) => {
                 // SI HEMOS OBTENIDO 1 O MÁS RESULTADOS EN NUESTRA BÚQUEDA, CONTINUAMOS, CASO CONTRARIO ES QUE NO HAY COINCIDENCIAS
                 console.log('seguimos bien');
