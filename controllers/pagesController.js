@@ -63,7 +63,7 @@ module.exports={
                         else{
                             console.log('usuario si existe')
                             //GENERA EL TOKEN
-                            const token = jwt.sign({id:user}, process.env.JWT_SECRETO, {
+                            /*const token = jwt.sign({id:user}, process.env.JWT_SECRETO, {
                                 expiresIn: process.env.JWT_TIEMPO_EXPIRA
                             })
                             console.log(process.env.JWT_SECRETO);
@@ -73,7 +73,7 @@ module.exports={
                                 expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES*24*60*60*1000),
                                 httpOnly: true
                             }
-                            res.cookie('jwt', token, cookiesOptions)
+                            res.cookie('jwt', token, cookiesOptions)*/
 
                             //LO REDIRIGUE AL DASHBOARD
                             console.log('dashboard')
@@ -196,7 +196,7 @@ module.exports={
                 nombre_lar: req.session.nombre_lar,
                 puesto: req.session.puesto
             }
-            res.render('pages/negada');
+            res.render('pages/negada', {data:data});
         } else {
             res.redirect('/maxmin/');
         }
@@ -208,7 +208,7 @@ module.exports={
                 nombre_lar: req.session.nombre_lar,
                 puesto: req.session.puesto
             }
-            res.render('pages/rebajas');
+            res.render('pages/rebajas', {data:data});
         } else {
             res.redirect('/maxmin/');
         }
