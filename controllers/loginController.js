@@ -49,7 +49,7 @@ module.exports={
             try{
                 //RECIBE LAS VARIABLES DEL HTML
                 const user = req.body.user.toUpperCase().trim();
-                const contraseña = req.body.password.toUpperCase();
+                const contraseña = req.body.password+'';
                 contraseña = contraseña.toUpperCase();
                 console.log("Usuario: "+user+" Contraseña: "+contraseña);
         
