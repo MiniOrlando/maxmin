@@ -215,6 +215,7 @@ module.exports={
     },
 
     getProductData: function(req, res, next) {
+        console.log('entrando al método getProductData');
         try {
             // OBTENEMOS VALORES CODIGO Y SUCURSAL PARA REALIZAR BÚSQUEDA
             const sucursal = req.session.sucursal;
@@ -223,6 +224,7 @@ module.exports={
             const almC = sucursal+"C";
             const almM = sucursal+"M";
             var code = codigo+"%";
+            console.log('hasta aquí todo bien');
             // ACCEDEMOS A LA DB PARA OBTENER DATOS
             new conexion.Request()
             .input('code', code)
@@ -237,6 +239,7 @@ module.exports={
                     WHERE iars.alm = @sucursal AND iars.alm IN (@almc, @almm) AND (iar.art LIKE @code OR iar.des1 LIKE @code OR iar.cve_lar LIKE @code)
                     ORDER BY iar.art ASC`, async(error, results) => {
                 // SI HEMOS OBTENIDO 1 O MÁS RESULTADOS EN NUESTRA BÚQUEDA, CONTINUAMOS, CASO CONTRARIO ES QUE NO HAY COINCIDENCIAS
+                console.log('seguimos bien');
                 if (results.rowsAffected>0) {
                     console.log("4. results: ");
                     console.log(results);
@@ -253,6 +256,7 @@ module.exports={
                     new conexion.Request()
                     .input('codigo', dataTemp.codigo)
                     .query(`SELECT * FROM resumendos WHERE Codigo = @codigo`, async(error, results) => {
+                        console.log('y todo sigue bien')
                         console.log(results);
                         if(!results) {
                             return next();
