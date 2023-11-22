@@ -50,6 +50,7 @@ module.exports={
                 //RECIBE LAS VARIABLES DEL HTML
                 const user = req.body.user.toUpperCase().trim();
                 const contraseña = req.body.password.toUpperCase();
+                contraseña = contraseña.toUpperCase();
                 console.log("Usuario: "+user+" Contraseña: "+contraseña);
         
                 //COMPRUEBA EXISTENCIA DE DATOS Y DE ESTAR MAL RECARGA LA PÁGINA CON UNA ALERTA
