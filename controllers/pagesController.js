@@ -228,11 +228,12 @@ module.exports={
         .input('sucursal', sucursal)
         .input('almc', almC)
         .input('almm', almM)
-        .query(`SELECT DISTINCT TOP 6
-                iar.art CveArt, iars.alm Almacen, iar.des1 Descripcion
+        .query(`SELECT DISTINCT TOP 5
+                iar.art CveArt, iar.cve_lar Barcode, iars.alm Almacen, iars.sub_alm SubAlm, iar.lin Linea, iar.des1 Descripcion
                 FROM inviar iar
+                JOIN invart iart ON iar.art = iart.art
                 JOIN invars iars ON iar.art = iars.cve_art
-                WHERE iars.alm = @sucursal AND (iar.art LIKE @code OR iar.des1 LIKE @code OR iar.cve_lar LIKE @code)
+                WHERE iars.alm = @sucursal AND iars.alm IN (@almc, @almm) AND (iar.art LIKE @code OR iar.des1 LIKE @code OR iar.cve_lar LIKE @code)
                 ORDER BY iar.art ASC`, async(error, results) => {
             // SI HEMOS OBTENIDO 1 O MÁS RESULTADOS EN NUESTRA BÚQUEDA, CONTINUAMOS, CASO CONTRARIO ES QUE NO HAY COINCIDENCIAS
             if (results.rowsAffected>0) {
@@ -252,6 +253,22 @@ module.exports={
                 .input('codigo', dataTemp.codigo)
                 .query(`SELECT * FROM resumendos WHERE Codigo = @codigo`, async(error, results) => {
                     console.log(results);
+                    if (error) {
+                        const data = {
+                            nombre_lar: req.session.nombre_lar,
+                            puesto: req.session.puesto,
+                            sucursal: req.session.sucursal,
+                            codigo: '0',
+                            existenciaAlmC: '0',
+                            descripcion: '0',
+                            barcode: '0',
+                            almacen: '0',
+                            productos: '0',
+                            promedio: '0'
+                        }
+                        // ENVIAMOS LA INFORMACIÓN
+                        res.send({data:data});
+                    }
                     // SI OBTENEMOS MÁS DE UN RESULTADO ES PORQUE TIENE VALORES EN ALMACÉN C Y M
                     if (results.rowsAffected > 1) {
                         var datos = results.recordsets;
