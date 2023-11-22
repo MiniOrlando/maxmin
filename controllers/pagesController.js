@@ -225,6 +225,7 @@ module.exports={
             const almM = sucursal+"M";
             var code = codigo+"%";
             console.log('hasta aquí todo bien');
+            console.log(`valores a buscar: ${sucursal} - ${codigo} - ${code} - ${almC} - ${almM}`);
             // ACCEDEMOS A LA DB PARA OBTENER DATOS
             new conexion.Request()
             .input('code', code)
@@ -241,8 +242,8 @@ module.exports={
                 // SI HEMOS OBTENIDO 1 O MÁS RESULTADOS EN NUESTRA BÚQUEDA, CONTINUAMOS, CASO CONTRARIO ES QUE NO HAY COINCIDENCIAS
                 console.log('seguimos bien');
                 if (results.rowsAffected>0) {
-                    console.log("4. results: ");
-                    console.log(results);
+                    console.log("5. results: ");
+                    console.log('rowAffected > 0');
                     // DEFINIMOS VARIABLE CON DATOS QUE OCUPAREMOS MÁS ADELANTE
                     const dataTemp = {
                         codigo: results.recordsets[0][0].CveArt,
@@ -256,17 +257,13 @@ module.exports={
                     new conexion.Request()
                     .input('codigo', dataTemp.codigo)
                     .query(`SELECT * FROM resumendos WHERE Codigo = @codigo`, async(error, results) => {
-                        console.log('y todo sigue bien')
-                        console.log(results);
-                        if(!results) {
-                            return next();
-                        }
-                        
+                        console.log('y todo sigue bien');
                         // SI OBTENEMOS MÁS DE UN RESULTADO ES PORQUE TIENE VALORES EN ALMACÉN C Y M
                         if (results.rowsAffected > 1) {
-                            var datos = results.recordsets;
+                            console.log('aún bien');
+                            //var datos = results.recordsets;
                             console.log('datos');
-                            console.log(datos);
+                            console.log('rowAffected > 1');
                             // SUMAMOS LOS VALORES EN ALMACÉN C Y M PARA OBTENER EL PROMEDIO FINAL
                             var promedio = results.recordsets[0][0].PromUnidades + results.recordsets[0][1].PromUnidades;
                             promedio = Math.round(promedio * 10000) / 10000;
@@ -286,9 +283,9 @@ module.exports={
                             }
                             // ENVIAMOS LA INFORMACIÓN
                             res.send({data:data});
-                            return next();
                         // SI SÓLO ES UN RESULTADO ES PORQUE SÓLO TIENEN VALORES EN C Ó EN M, APLICAMOS DIRECTO EL VALOR
                         } else if (results.rowsAffected == 1) {
+                            console.log('rowAffected = 1');
                             const data = {
                                 nombre_lar: req.session.nombre_lar,
                                 puesto: req.session.puesto,
@@ -304,13 +301,13 @@ module.exports={
                             }
                             // ENVIAMOS LA INFORMACIÓN
                             res.send({data:data});
-                            return next();
                         }
                     });
                     //getPromedioVentas(data);
                     //res.send({data:data});
                 } else {
                     //TODO: Enviar un SweetAlert que diga "Sin existencias"
+                    console.log('no hay existencias')
                     const data = {
                         nombre_lar: req.session.nombre_lar,
                         puesto: req.session.puesto,
@@ -320,10 +317,15 @@ module.exports={
                     // ENVIAMOS LA INFORMACIÓN
                     res.send({data:data});
                 }
+
+                if (error) {
+                    console.log('hay errores en el primer query');
+                    console.log(error);
+                }
             });
         } catch (error) {
+            console.log('hay errores en el try catch');
             console.log(error);
-            return next();
         }
         
     },
