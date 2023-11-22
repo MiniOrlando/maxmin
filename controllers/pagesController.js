@@ -390,6 +390,7 @@ module.exports={
     },
 
     getProductDataById: function(req, res) {
+        console.log('método getProductDataById');
         const sucursal = req.session.sucursal;
         const codigo = req.body.searchValue;
         const alm = req.body.alm;
@@ -424,7 +425,7 @@ module.exports={
                     if (results.rowsAffected > 1) {
                         var datos = results.recordsets;
                         console.log('datos');
-                        console.log(datos);
+                        //console.log(datos);
                         // SUMAMOS LOS VALORES EN ALMACÉN C Y M PARA OBTENER EL PROMEDIO FINAL
                         var promedio = results.recordsets[0][0].PromUnidades + results.recordsets[0][1].PromUnidades;
                         promedio = Math.round(promedio * 10000) / 10000;
