@@ -407,7 +407,9 @@ module.exports={
         JOIN invars iars ON iar.art = iars.cve_art
         WHERE iars.alm = @sucursal AND iar.art = @codigo 
         ORDER BY iar.art`, async(error, results) => {
+            console.log('entró al primer select');
             if(results.rowsAffected>0) {
+                console.log('primer select - rowsAffected > 0');
                 const dataTemp = {
                     codigo: results.recordsets[0][0].CveArt,
                     existenciaAlmC: results.recordsets[0][0].Existencia,
@@ -420,9 +422,11 @@ module.exports={
                 new conexion.Request()
                 .input('codigo', dataTemp.codigo)
                 .query(`SELECT * FROM resumendos WHERE Codigo = @codigo`, async(error, results) => {
-                    console.log(results);
+                    console.log('entró al segundo select');
+                    //console.log(results);
                     // SI OBTENEMOS MÁS DE UN RESULTADO ES PORQUE TIENE VALORES EN ALMACÉN C Y M
                     if (results.rowsAffected > 1) {
+                        console.log('segundo select - rowsAffected > 1');
                         var datos = results.recordsets;
                         console.log('datos');
                         //console.log(datos);
