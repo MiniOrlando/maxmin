@@ -364,7 +364,7 @@ module.exports={
             console.log('query ejecutado');
 
             if (results.rowsAffected>0) {
-                console.log('rowsAffected > 0');
+                console.log('getTopTenProductsData - rowsAffected > 0');
                 console.log("4. results: ");
                 //console.log(results);
                 // DEFINIMOS VARIABLE CON DATOS QUE OCUPAREMOS MÁS ADELANTE
@@ -376,7 +376,7 @@ module.exports={
                 // ENVIAMOS LA INFORMACIÓN
                 res.send({data:data});
             } else {
-                console.log('rowsAffected <= 0');
+                console.log('getTopTenProductsData - rowsAffected <= 0');
                 const data = {
                     hayCoincidencias: false,
                     msg: 'No hay coincidencias'
@@ -421,7 +421,10 @@ module.exports={
                 // CREAMOS UNA NUEVA CONSULTA PARA SABER LA VENTA PROMEDIO
                 new conexion.Request()
                 .input('codigo', dataTemp.codigo)
-                .query(`SELECT * FROM resumendos WHERE Codigo = @codigo`, async(error, results) => {
+                .input('almc', dataTemp.almacen+'C')
+                .input('almm', dataTemp.almacen+'M')
+                .query(`SELECT * FROM resumendos 
+                        WHERE Codigo = @codigo AND subalm IN (@almc, @almm)`, async(error, results) => {
                     console.log('entró al segundo select');
                     //console.log(results);
                     // SI OBTENEMOS MÁS DE UN RESULTADO ES PORQUE TIENE VALORES EN ALMACÉN C Y M
@@ -444,7 +447,8 @@ module.exports={
                             barcode: dataTemp.barcode,
                             almacen: dataTemp.almacen,
                             productos: dataTemp.productos,
-                            promedio: promedio
+                            promedio: promedio,
+                            hasData: true
                         }
                         // ENVIAMOS LA INFORMACIÓN
                         res.send({data:data});
@@ -460,7 +464,18 @@ module.exports={
                             barcode: dataTemp.barcode,
                             almacen: dataTemp.almacen,
                             productos: dataTemp.productos,
-                            promedio: results.recordsets[0][0].PromUnidades
+                            promedio: results.recordsets[0][0].PromUnidades,
+                            hasData: true
+                        }
+                        // ENVIAMOS LA INFORMACIÓN
+                        res.send({data:data});
+                    } else {
+                        console.log('rowAffected < 1 || rowsAffected = 0');
+                        const data = {
+                            nombre_lar: req.session.nombre_lar,
+                            puesto: req.session.puesto,
+                            sucursal: req.session.sucursal,
+                            hasData: false
                         }
                         // ENVIAMOS LA INFORMACIÓN
                         res.send({data:data});
