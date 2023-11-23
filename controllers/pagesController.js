@@ -513,7 +513,7 @@ module.exports={
             .input('sucursal', req.session.sucursal)
             .input('dateToConsult', dateToConsult)
             .query(`SELECT * FROM cap_maxmin 
-                    WHERE cve_art = @codigo AND sucursal = @sucursal AND fec_cre >= @dateToConsult`, 
+                    WHERE cve_art = @codigo AND estatus != '4' AND sucursal = @sucursal AND fec_cre >= @dateToConsult`, 
                     async(err, result) => {
                         if(result.rowsAffected!=0) {
                             const data = {
