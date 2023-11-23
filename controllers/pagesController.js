@@ -880,8 +880,25 @@ module.exports={
 
             console.log(`product details: ${product} - ${usr} - ${sucursal}`);
             console.log(`dates: ${date} - ${dateToConsult}`);
-            
+
             new conexion.Request()
+            .input('codigo', codigo)
+            .input('description', product)
+            .input('date', date)
+            .input('sucursal', sucursal)
+            .input('usr', usr)
+            .query(`INSERT INTO cap_neg
+                    VALUES (@description, @date, @usr, @sucursal, '0', @codigo)`, async (error, results) => {
+                console.log('Venta negada insertada');
+                res.send({hasStored: true, productExist: false});
+                /*if (results.rowsAffected > 0) {
+                    res.send({hasStored: true, productExist: false});
+                } else {
+                    res.send({hasStored: false, productExist: false});
+                }*/
+            });
+            
+            /*new conexion.Request()
             .input('codigo', codigo)
             .input('sucursal', req.session.sucursal)
             .input('dateToConsult', dateToConsult)
@@ -918,7 +935,7 @@ module.exports={
                             console.log('oh rayos!');
                             console.log(err)
                         }
-                    });
+                    });*/
         } else {
             res.redirect('/maxmin/');
         }
