@@ -194,7 +194,8 @@ module.exports={
         if(req.session.loggedin) {
             data = {
                 nombre_lar: req.session.nombre_lar,
-                puesto: req.session.puesto
+                puesto: req.session.puesto,
+                sucursal: req.session.sucursal
             }
             res.render('pages/negada', {data:data});
         } else {
@@ -206,7 +207,8 @@ module.exports={
         if(req.session.loggedin) {
             data = {
                 nombre_lar: req.session.nombre_lar,
-                puesto: req.session.puesto
+                puesto: req.session.puesto,
+                sucursal: req.session.sucursal
             }
             res.render('pages/rebajas', {data:data});
         } else {
