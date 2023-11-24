@@ -305,12 +305,21 @@ module.exports={
                             // ENVIAMOS LA INFORMACIÓN
                             res.send({data:data});
                         } else {
+                            console.log('método getProductData');
                             console.log('rowAffected < 1 || rowsAffected = 0');
+                            console.log('no hay promedio, entonces se envía 0');
                             const data = {
                                 nombre_lar: req.session.nombre_lar,
                                 puesto: req.session.puesto,
                                 sucursal: req.session.sucursal,
-                                hasData: false
+                                codigo: dataTemp.codigo,
+                                existenciaAlmC: dataTemp.existenciaAlmC,
+                                descripcion: dataTemp.descripcion,
+                                barcode: dataTemp.barcode,
+                                almacen: dataTemp.almacen,
+                                productos: dataTemp.productos,
+                                promedio: '0',
+                                hasData: true
                             }
                             // ENVIAMOS LA INFORMACIÓN
                             res.send({data:data});
@@ -472,12 +481,21 @@ module.exports={
                         // ENVIAMOS LA INFORMACIÓN
                         res.send({data:data});
                     } else {
+                        console.log('método getProductDataById');
                         console.log('rowAffected < 1 || rowsAffected = 0');
+                        console.log('no hay promedio, entonces se envía 0');
                         const data = {
                             nombre_lar: req.session.nombre_lar,
                             puesto: req.session.puesto,
                             sucursal: req.session.sucursal,
-                            hasData: false
+                            codigo: dataTemp.codigo,
+                            existenciaAlmC: dataTemp.existenciaAlmC,
+                            descripcion: dataTemp.descripcion,
+                            barcode: dataTemp.barcode,
+                            almacen: dataTemp.almacen,
+                            productos: dataTemp.productos,
+                            promedio: '0',
+                            hasData: true
                         }
                         // ENVIAMOS LA INFORMACIÓN
                         res.send({data:data});
@@ -630,7 +648,7 @@ module.exports={
                     max_cjs_c = @maxCjsC, min_cjs_c = @minCjsC,
                     max_cjs_m = @maxCjsM, min_pzs_m = @minPzsM,
                     fec_cre = @date, estatus = '3'
-                    WHERE cve_art = @codigo AND sucursal = @sucursal AND fec_cre >= @dateToConsult`, async(err, result) => {
+                    WHERE id = @codigo AND sucursal = @sucursal AND fec_cre >= @dateToConsult`, async(err, result) => {
                 console.log('Se actualizó, creo');
                 console.log(result);
                 const data = {
@@ -666,7 +684,7 @@ module.exports={
             .input('dateToConsult', dateToConsult)
             .query(`UPDATE cap_maxmin 
                     SET estatus = '4', usr_cre = @usr
-                    WHERE cve_art = @codigo AND sucursal = @sucursal AND fec_cre >= @dateToConsult`, async(err, result) => {
+                    WHERE id = @codigo AND sucursal = @sucursal AND fec_cre >= @dateToConsult`, async(err, result) => {
                 console.log('Se eliminó, creo');
                 console.log(result);
                 const data = {
@@ -875,11 +893,11 @@ module.exports={
             const usr = req.session.nombre_lar;
             const sucursal = req.session.sucursal;
             var date = moment().format('YYYY-MM-DD HH:mm:ss');
-            var dateToConsult = moment().format('YYYY-MM-DD');
-            dateToConsult = dateToConsult.replace(/-/gi, '');
+            //var dateToConsult = moment().format('YYYY-MM-DD');
+            //dateToConsult = dateToConsult.replace(/-/gi, '');
 
             console.log(`product details: ${product} - ${usr} - ${sucursal}`);
-            console.log(`dates: ${date} - ${dateToConsult}`);
+            //console.log(`dates: ${date} - ${dateToConsult}`);
 
             new conexion.Request()
             .input('codigo', codigo)

@@ -5,16 +5,8 @@ const jwt = require('jsonwebtoken')
 module.exports = conexion
 
 //VARIABLES DE CONEXION
-/*var SQLConfig = {
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    server: process.env.DB_HOST,
-    database: process.env.DB_DATABASE,
-    options: {
-        encrypt: false
-    }
-}*/
 
+// CONECTAR A OFC PARA PRODUCCIÓN
 var SQLConfig = {
     user: 'sa',
     password: 'UaPVMM6P',
@@ -26,6 +18,16 @@ var SQLConfig = {
     }
 }
 
+// CONECTAR A LOCAL PARA PRUEBAS
+/*var SQLConfig = {
+    user: 'sa',
+    password: '12345678',
+    server: '172.16.3.202',
+    database: 'TCADBMAB',
+    options: {
+        encrypt: false
+    }
+}*/
 
 //MANEJO DEL ERROR
 conexion.on('error', error => {
@@ -37,5 +39,5 @@ conexion.connect(SQLConfig, error => {
     if(error){
         throw error 
     }
-    console.log('Conexión establecida')
+    console.log('Conexión establecida en: '+SQLConfig.server);
 })
