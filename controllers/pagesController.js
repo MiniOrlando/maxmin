@@ -81,7 +81,7 @@ module.exports={
                             req.session.user = user;
 
                             var data;
-                            const nombre_lar = results.recordsets[0][0].nombre_lar.trim();
+                            const nombre_lar = results.recordsets[0][0].nombre.trim();
                             const puesto = results.recordsets[0][0].puesto.trim();
                             const sucursal = results.recordsets[0][0].cia_ventas.trim();
                             req.session.nombre_lar = nombre_lar;
