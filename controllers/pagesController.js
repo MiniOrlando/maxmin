@@ -725,9 +725,42 @@ module.exports={
             // CONFIGURAMOS ALMC y ALMM PARA QUE FUNCIONEN COMO CALUSULAS WHERE PARA DEFINIR LA BÚSQUEDA
             const almc = sucursal+"C";
             const almm = sucursal+"M";
-            new conexion.Request()
-            .input('type', type+'%')
-            .query(`SELECT DISTINCT
+            console.log('getProductsCaptura: '+type);
+            var query = '';
+            console.log('getProductsCaptura: '+query);
+            // CREAMOS LOS QUERIES ESPECÍFICOS PARA LA BÚSQUEDA DEPENDIENDO DEL TIPO DE ARTÍCULO
+            switch(type) {
+                case 'TORTI':
+                    query = `SELECT DISTINCT 
+                    art CveArt, lin Linea, des1 Descripcion
+                    FROM inviar
+                    WHERE des1 = 'TORTILLA 1/2 KG'
+                    AND lin IN ('ALIM', 'PERE')`;
+                    break;
+                case 'FRUT':
+                    query = `SELECT DISTINCT
+                    art CveArt, lin Linea, des1 Descripcion
+                    FROM inviar 
+                    WHERE des1 LIKE 'FRUT%'
+                    AND des1 NOT LIKE '%NO USAR%'
+                    AND lin IN ('ALIM', 'PERE')
+                    ORDER BY des1 ASC`;
+                    break;
+                case 'PAN':
+                    query = `SELECT DISTINCT
+                    art CveArt, lin Linea, des1 Descripcion
+                    FROM inviar
+                    WHERE des1 LIKE 'PAN%'
+                    AND des1 NOT LIKE 'PANTENE%'
+                    AND des1 NOT LIKE 'PAÑ.DRIKIDS%'
+                    AND des1 NOT LIKE 'PAÑAL%' 
+                    AND des1 NOT LIKE 'PAÑUELOS%' 
+                    AND des1 NOT LIKE '%NO USAR%'
+                    AND lin IN ('ALIM', 'PERE')
+                    ORDER BY des1 ASC`;
+                    break;
+                default:
+                    query = `SELECT DISTINCT
                     iar.art CveArt, iar.lin Linea, iar.des1 Descripcion
                     FROM inviar iar
                     JOIN invars iars ON iar.art = iars.cve_art
@@ -737,13 +770,22 @@ module.exports={
                     AND iar.des1 NOT LIKE 'PAÑUELOS%' 
                     AND iar.des1 NOT LIKE '%NO USAR%'
                     AND iar.lin IN ('ALIM', 'PERE')
-                    ORDER BY iar.art ASC`, async (error, results) => {
-                if (results.rowsAffected > 1) {
+                    ORDER BY des1 ASC`;
+                    break;
+            }
+            console.log('getProductsCaptura: '+query);
+            new conexion.Request()
+            .input('type', type+'%')
+            .query(query, async (error, results) => {
+                if (results.rowsAffected > 0) {
+                    console.log('results');
+                    console.log('rowsAffected: '+results.rowsAffected);
                     res.send({
                         data:results.recordset,
                         hasData: true
                     });
                 } else {
+                    console.log('no results');
                     res.send({
                         data:results.recordset,
                         hasData: false
