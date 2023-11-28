@@ -273,7 +273,7 @@
                                                         <a class="nav-link list-actions g-dot-TORTILLAS" id="note-TORTILLAS">Tortillas</a>
                                                     </li>
                                                     <!--li class="nav-item">
-                                                        <a class="nav-link list-actions g-dot-danger" id="note-important">Important</a>
+                                                        <a class="nav-link list-actions g-dot-VERDURAS" id="note-VERDURAS">Verduras</a>
                                                     </li-->
                                                 </ul>
                                             </div>
@@ -303,7 +303,10 @@
                                                     <% url = 'frutas/frutas_500.png'; %>
                                                 <% } else if (tipo == 'TORTILLAS') { %>
                                                     <% url = 'tortillas/tortillas_sueltas_500.png'; %>
+                                                <% } else if (tipo == 'VERDURAS') { %>
+                                                    <% url = 'verduras/verduras_500.png'; %>
                                                 <% } %>
+
 
                                                 <div class="note-item all-notes note-<%= tipo %> ">
                                                     <div class="note-inner-content">
@@ -385,6 +388,12 @@
                                                                         Tortillas
                                                                     </label>
                                                                 </div>
+                                                                <!--div class="form-check form-check-success form-check-inline">
+                                                                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="form-check-radio-success">
+                                                                    <label class="form-check-label text-center" for="form-check-radio-success">
+                                                                        Verduras
+                                                                    </label>
+                                                                </div-->
                                                             </div><br><br>
 
                                                             <!-- ESCOGER PRODUCTO ESPECÍFICO -->
