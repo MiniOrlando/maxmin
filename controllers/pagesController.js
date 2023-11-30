@@ -515,8 +515,12 @@ module.exports={
             const catalogo = req.body.cCatalogo;
             const maxCjsC = req.body.cMaxCjsC;
             const minCjsC = req.body.cMinCjsC;
+            const maxCjsCWanted = req.body.cMaxCjsCWanted;
+            const minCjsCWanted = req.body.cMinCjsCWanted;
             const maxCjsM = req.body.cMaxCjsM;
             const minPzsM = req.body.cMinPzsM;
+            const maxCjsMWanted = req.body.cMaxCjsMWanted;
+            const minPzsMWanted = req.body.cMinPzsMWanted;
             const alm = req.body.cAlm;
             var date = moment().format('YYYY-MM-DD HH:mm:ss');
             console.log(date);
@@ -556,8 +560,12 @@ module.exports={
                             .input('catalogo', catalogo)
                             .input('maxCjsC', maxCjsC)
                             .input('minCjsC', minCjsC)
+                            .input('maxCjsCWanted', maxCjsCWanted)
+                            .input('minCjsCWanted', minCjsCWanted)
                             .input('maxCjsM', maxCjsM)
                             .input('minPzsM', minPzsM)
+                            .input('maxCjsMWanted', maxCjsMWanted)
+                            .input('minPzsMWanted', minPzsMWanted)
                             .input('date', date)
                             .input('usr', req.session.nombre_lar)
                             .input('sucursal', req.session.sucursal)
@@ -572,10 +580,10 @@ module.exports={
                                         @minCjsC, 
                                         @maxCjsM, 
                                         @minPzsM, 
-                                        '0', 
-                                        '0',
-                                        '0', 
-                                        '0', 
+                                        @maxCjsCWanted, 
+                                        @minCjsCWanted, 
+                                        @maxCjsMWanted, 
+                                        @minPzsMWanted, 
                                         @date, 
                                         @usr, 
                                         @sucursal, 
@@ -625,6 +633,10 @@ module.exports={
             const minCjsC = req.body.cMinCjsC;
             const maxCjsM = req.body.cMaxCjsM;
             const minPzsM = req.body.cMinPzsM;
+            const maxCjsCWanted = req.body.cMaxCjsCWanted;
+            const minCjsCWanted = req.body.cMinCjsCWanted;
+            const maxCjsMWanted = req.body.cMaxCjsMWanted;
+            const minPzsMWanted = req.body.cMinPzsMWanted;
             var date = moment().format('YYYY-MM-DD HH:mm:ss');
             console.log(date);
             var dateToConsult = moment().format('YYYY-MM-DD');
@@ -641,12 +653,18 @@ module.exports={
             .input('minCjsC', minCjsC)
             .input('maxCjsM', maxCjsM)
             .input('minPzsM', minPzsM)
+            .input('maxCjsCWanted', maxCjsCWanted)
+            .input('minCjsCWanted', minCjsCWanted)
+            .input('maxCjsMWanted', maxCjsMWanted)
+            .input('minPzsMWanted', minPzsMWanted)
             .input('date', date)
             .input('dateToConsult', dateToConsult)
             .query(`UPDATE cap_maxmin 
                     SET usr_cre = @usr, cta_bsc = @canasta, art_cat_serv = @catalogo, 
                     max_cjs_c = @maxCjsC, min_cjs_c = @minCjsC,
+                    mod_max_cjs_c = @maxCjsCWanted, mod_min_cjs_c = @minCjsCWanted,
                     max_cjs_m = @maxCjsM, min_pzs_m = @minPzsM,
+                    mod_max_cjs_m = @maxCjsMWanted, mod_min_pzs_m = @minPzsMWanted,
                     fec_cre = @date, estatus = '3'
                     WHERE id = @codigo AND sucursal = @sucursal AND fec_cre >= @dateToConsult`, async(err, result) => {
                 console.log('Se actualizó, creo');
