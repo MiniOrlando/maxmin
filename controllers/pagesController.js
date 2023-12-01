@@ -19,6 +19,8 @@ module.exports={
                     sucursal: req.session.sucursal,
                     tabla: results.recordset
                 }
+                console.log('auth validate');
+                console.log(results.recordset)
                 res.render('pages/maxmin', {data:data});
             });
         } else {
