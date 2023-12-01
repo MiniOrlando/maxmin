@@ -845,8 +845,6 @@ module.exports={
                     AND sucursal = @sucursal 
                     AND fec_cre >= @dateToConsult`,
                     async (err, result) => {
-                        console.log('result');
-                        console.log(result);
                         if (result.rowsAffected != 0 ) {
                             res.send({hasStored: false, productExist: true});
                         } else {
