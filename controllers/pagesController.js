@@ -46,7 +46,7 @@ module.exports={
                 else{
                     console.log("Usuario y contraseña no vacíos");
                     // AGREGAMOS UNA VALIDACIÓN PARA EL USUARIO LUCAS DE LAS SUCURSALES 056 Y 057
-                    if (user == "LUCAS" && contraseña == "12345") {
+                    if (user == "LUCAS" && contraseña == "5726") {
                         req.session.loggedin = true;
                         req.session.user = user;
                         req.session.nombre_lar = "LUCAS";
