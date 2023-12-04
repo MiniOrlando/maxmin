@@ -45,84 +45,122 @@ module.exports={
                 //BUSCA LOS DATOS DE ACCESO EN LA DB
                 else{
                     console.log("Usuario y contraseña no vacíos");
-                    new conexion.Request()
-                    .input('user', user)
-                    .query(`SELECT * FROM tcausr WHERE nombre = @user AND puesto != 'BAJA'`, async (error, results) => {
+                    // AGREGAMOS UNA VALIDACIÓN PARA EL USUARIO LUCAS DE LAS SUCURSALES 056 Y 057
+                    if (user == "LUCAS" && contraseña == "12345") {
+                        req.session.loggedin = true;
+                        req.session.user = user;
+                        req.session.nombre_lar = "LUCAS";
+                        req.session.puesto = "GTEOPE";
+                        req.session.sucursal = "057";
+                        var today = new Date();
+                        today = new Date().toDateString().split(" ");
+                        //console.log("todays date", today);
 
-                        //SI NO EXISTE EL USUARIO O LA CONTRASEÑA NO COINCIDE RECARGA LOGIN CON UNA ALERTA
-                        if(results.recordset.length == 0 || contraseña != results.recordsets[0][0].pwd.trim()){
-                            console.log('Usuario no existe o contraseña incorrecta')
-                            res.render('login/login', {
+                        var dateToConsult = moment().format('YYYY-MM-DD');
+                        dateToConsult = dateToConsult.replace(/-/gi, '');
+                        //console.log(dateToConsult);
+
+                        new conexion.Request()
+                        .input('usr', "LUCAS")
+                        .input('dateToConsult', dateToConsult)
+                        .input('sucursal', "057")
+                        .query(`SELECT * FROM cap_maxmin 
+                                WHERE sucursal = @sucursal AND estatus IN ('0', '3') AND fec_cre >= @dateToConsult`, async(error, results) => {
+                            data = {
+                                nombre_lar: "LUCAS",
+                                puesto: "GTEOPE",
+                                sucursal: "057",
+                                tabla: results.recordset,
                                 alert: true,
-                                alertTitle: "Error",
-                                alertText: "Datos de acceso incorrectos",
-                                alertIcon: "error",
+                                alertTitle: "¡Bienvenido!",
+                                alertText: "Datos de acceso correctos",
+                                alertIcon: "success",
                                 alertButton: "Ok"
-                            });
-                        }
-
-                        //EN CASO DE QUE EL USUARIO SEA CORRECTO, ACCEDE AL DASHBOARD
-                        else{
-                            console.log('usuario si existe')
-                            //GENERA EL TOKEN
-                            /*const token = jwt.sign({id:user}, process.env.JWT_SECRETO, {
-                                expiresIn: process.env.JWT_TIEMPO_EXPIRA
-                            })
-                            console.log(process.env.JWT_SECRETO);
-
-                            //GENERA LA COOKIE
-                            const cookiesOptions = {
-                                expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES*24*60*60*1000),
-                                httpOnly: true
                             }
-                            res.cookie('jwt', token, cookiesOptions)*/
+                            //console.log(results.recordset);
+                            //console.log('length: '+results.recordset.length);
+                            res.render('pages/maxmin', {data:data});
+                        });
+                    } else {
+                        new conexion.Request()
+                        .input('user', user)
+                        .query(`SELECT * FROM tcausr WHERE nombre = @user AND puesto != 'BAJA'`, async (error, results) => {
 
-                            //LO REDIRIGUE AL DASHBOARD
-                            console.log('dashboard')
-                            req.session.loggedin = true;
-                            req.session.user = user;
-
-                            var data;
-                            const nombre_lar = results.recordsets[0][0].nombre.trim();
-                            const puesto = results.recordsets[0][0].puesto.trim();
-                            const sucursal = results.recordsets[0][0].cia_ventas.trim();
-                            req.session.nombre_lar = nombre_lar;
-                            req.session.puesto = puesto;
-                            req.session.sucursal = sucursal;
-
-                            var today = new Date();
-                            today = new Date().toDateString().split(" ");
-                            console.log("todays date", today);
-
-                            var dateToConsult = moment().format('YYYY-MM-DD');
-                            dateToConsult = dateToConsult.replace(/-/gi, '');
-                            console.log(dateToConsult);
-
-                            new conexion.Request()
-                            .input('usr', nombre_lar)
-                            .input('dateToConsult', dateToConsult)
-			                .input('sucursal', sucursal)
-                            .query(`SELECT * FROM cap_maxmin 
-                                    WHERE sucursal = @sucursal AND estatus IN ('0', '3') AND fec_cre >= @dateToConsult`, async(error, results) => {
-                                data = {
-                                    nombre_lar: nombre_lar,
-                                    puesto: puesto,
-                                    sucursal: sucursal,
-                                    tabla: results.recordset,
+                            //SI NO EXISTE EL USUARIO O LA CONTRASEÑA NO COINCIDE RECARGA LOGIN CON UNA ALERTA
+                            if(results.recordset.length == 0 || contraseña != results.recordsets[0][0].pwd.trim()){
+                                console.log('Usuario no existe o contraseña incorrecta')
+                                res.render('login/login', {
                                     alert: true,
-                                    alertTitle: "¡Bienvenido!",
-                                    alertText: "Datos de acceso correctos",
-                                    alertIcon: "success",
+                                    alertTitle: "Error",
+                                    alertText: "Datos de acceso incorrectos",
+                                    alertIcon: "error",
                                     alertButton: "Ok"
-                                }
-                                console.log(results.recordset);
-                                console.log('length: '+results.recordset.length);
-                                res.render('pages/maxmin', {data:data});
-                            });
+                                });
+                            }
 
-                            //res.redirect('../pages/');
-                        }
-                    })
+                            //EN CASO DE QUE EL USUARIO SEA CORRECTO, ACCEDE AL DASHBOARD
+                            else{
+                                console.log('usuario si existe')
+                                //GENERA EL TOKEN
+                                /*const token = jwt.sign({id:user}, process.env.JWT_SECRETO, {
+                                    expiresIn: process.env.JWT_TIEMPO_EXPIRA
+                                })
+                                console.log(process.env.JWT_SECRETO);
+
+                                //GENERA LA COOKIE
+                                const cookiesOptions = {
+                                    expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES*24*60*60*1000),
+                                    httpOnly: true
+                                }
+                                res.cookie('jwt', token, cookiesOptions)*/
+
+                                //LO REDIRIGUE AL DASHBOARD
+                                console.log('dashboard')
+                                req.session.loggedin = true;
+                                req.session.user = user;
+
+                                var data;
+                                const nombre_lar = results.recordsets[0][0].nombre.trim();
+                                const puesto = results.recordsets[0][0].puesto.trim();
+                                const sucursal = results.recordsets[0][0].cia_ventas.trim();
+                                req.session.nombre_lar = nombre_lar;
+                                req.session.puesto = puesto;
+                                req.session.sucursal = sucursal;
+
+                                var today = new Date();
+                                today = new Date().toDateString().split(" ");
+                                //console.log("todays date", today);
+
+                                var dateToConsult = moment().format('YYYY-MM-DD');
+                                dateToConsult = dateToConsult.replace(/-/gi, '');
+                                //console.log(dateToConsult);
+
+                                new conexion.Request()
+                                .input('usr', nombre_lar)
+                                .input('dateToConsult', dateToConsult)
+                                .input('sucursal', sucursal)
+                                .query(`SELECT * FROM cap_maxmin 
+                                        WHERE sucursal = @sucursal AND estatus IN ('0', '3') AND fec_cre >= @dateToConsult`, async(error, results) => {
+                                    data = {
+                                        nombre_lar: nombre_lar,
+                                        puesto: puesto,
+                                        sucursal: sucursal,
+                                        tabla: results.recordset,
+                                        alert: true,
+                                        alertTitle: "¡Bienvenido!",
+                                        alertText: "Datos de acceso correctos",
+                                        alertIcon: "success",
+                                        alertButton: "Ok"
+                                    }
+                                    //console.log(results.recordset);
+                                    //console.log('length: '+results.recordset.length);
+                                    res.render('pages/maxmin', {data:data});
+                                });
+
+                                //res.redirect('../pages/');
+                            }
+                        });
+                    }
                 }
 
             //MANEJO DEL ERROR
@@ -745,9 +783,7 @@ module.exports={
             // CONFIGURAMOS ALMC y ALMM PARA QUE FUNCIONEN COMO CALUSULAS WHERE PARA DEFINIR LA BÚSQUEDA
             const almc = sucursal+"C";
             const almm = sucursal+"M";
-            console.log('getProductsCaptura: '+type);
             var query = '';
-            console.log('getProductsCaptura: '+query);
             // CREAMOS LOS QUERIES ESPECÍFICOS PARA LA BÚSQUEDA DEPENDIENDO DEL TIPO DE ARTÍCULO
             switch(type) {
                 case 'TORTI':
@@ -793,13 +829,12 @@ module.exports={
                     ORDER BY des1 ASC`;
                     break;
             }
-            console.log('getProductsCaptura: '+query);
             new conexion.Request()
             .input('type', type+'%')
             .query(query, async (error, results) => {
                 if (results.rowsAffected > 0) {
-                    console.log('results');
-                    console.log('rowsAffected: '+results.rowsAffected);
+                    //console.log('results');
+                    //console.log('rowsAffected: '+results.rowsAffected);
                     res.send({
                         data:results.recordset,
                         hasData: true

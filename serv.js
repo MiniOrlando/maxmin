@@ -5,6 +5,7 @@ const app = express();
 const path = require('path');
 const createError = require('http-errors');
 const dotenv = require('dotenv');
+const nocache = require('nocache');
 
 //var indexRouter = require('./routes/index');
 var loginRouter = require('./routes/login');
@@ -14,6 +15,7 @@ app.set('maxmin/views', path.join(__dirname, 'maxmin/views'));
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, '../public_maxmin/')));
 app.use(express.static('maxmin/views'));
+app.use(nocache());
 
 app.use(session({
 	secret: 'secret',
