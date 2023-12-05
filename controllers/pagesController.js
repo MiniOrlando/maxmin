@@ -27,11 +27,11 @@ module.exports={
             try{
                 //RECIBE LAS VARIABLES DEL HTML
                 const user = req.body.user.toUpperCase().trim();
-                const contraseña = req.body.password.toUpperCase();
-                console.log("Usuario: "+user+" Contraseña: "+contraseña);
+                const password = req.body.password.toUpperCase();
+                console.log("Usuario: "+user+" Contraseña: "+password);
 
                 //COMPRUEBA EXISTENCIA DE DATOS Y DE ESTAR MAL RECARGA LA PÁGINA CON UNA ALERTA
-                if(!user || !contraseña){
+                if(!user || !password){
                     console.log("Usuario y contraseña vacíos");
                     res.render('login/login', {
                         alert: true,
@@ -46,19 +46,15 @@ module.exports={
                 else{
                     console.log("Usuario y contraseña no vacíos");
                     // AGREGAMOS UNA VALIDACIÓN PARA EL USUARIO LUCAS DE LAS SUCURSALES 056 Y 057
-                    if (user == "LUCAS" && contraseña == "5726") {
+                    if (user == "LUCAS" && password == process.env.PASSWORD_057) {
                         req.session.loggedin = true;
                         req.session.user = user;
                         req.session.nombre_lar = "LUCAS";
                         req.session.puesto = "GTEOPE";
                         req.session.sucursal = "057";
-                        var today = new Date();
-                        today = new Date().toDateString().split(" ");
-                        //console.log("todays date", today);
 
                         var dateToConsult = moment().format('YYYY-MM-DD');
                         dateToConsult = dateToConsult.replace(/-/gi, '');
-                        //console.log(dateToConsult);
 
                         new conexion.Request()
                         .input('usr', "LUCAS")
@@ -77,8 +73,6 @@ module.exports={
                                 alertIcon: "success",
                                 alertButton: "Ok"
                             }
-                            //console.log(results.recordset);
-                            //console.log('length: '+results.recordset.length);
                             res.render('pages/maxmin', {data:data});
                         });
                     } else {
@@ -87,7 +81,7 @@ module.exports={
                         .query(`SELECT * FROM tcausr WHERE nombre = @user AND puesto != 'BAJA'`, async (error, results) => {
 
                             //SI NO EXISTE EL USUARIO O LA CONTRASEÑA NO COINCIDE RECARGA LOGIN CON UNA ALERTA
-                            if(results.recordset.length == 0 || contraseña != results.recordsets[0][0].pwd.trim()){
+                            if(results.recordset.length == 0 || password != results.recordsets[0][0].pwd.trim()){
                                 console.log('Usuario no existe o contraseña incorrecta')
                                 res.render('login/login', {
                                     alert: true,
