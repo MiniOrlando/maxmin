@@ -19,20 +19,20 @@ module.exports={
                     sucursal: req.session.sucursal,
                     tabla: results.recordset
                 }
-                console.log('auth validate');
-                console.log(results.recordset)
-                res.render('pages/maxmin', {data:data});
+                //console.log('auth validate');
+                //console.log(results.recordset)
+                res.render('pages/maxmin', { data:data });
             });
         } else {
             try{
                 //RECIBE LAS VARIABLES DEL HTML
                 const user = req.body.user.toUpperCase().trim();
                 const password = req.body.password.toUpperCase();
-                console.log("Usuario: "+user+" Contraseña: "+password);
+                console.log("Usuario: "+user);
 
                 //COMPRUEBA EXISTENCIA DE DATOS Y DE ESTAR MAL RECARGA LA PÁGINA CON UNA ALERTA
                 if(!user || !password){
-                    console.log("Usuario y contraseña vacíos");
+                    //console.log("Usuario y contraseña vacíos");
                     res.render('login/login', {
                         alert: true,
                         alertTitle: "Error",
@@ -44,7 +44,7 @@ module.exports={
 
                 //BUSCA LOS DATOS DE ACCESO EN LA DB
                 else{
-                    console.log("Usuario y contraseña no vacíos");
+                    //console.log("Usuario y contraseña no vacíos");
                     // AGREGAMOS UNA VALIDACIÓN PARA EL USUARIO LUCAS DE LAS SUCURSALES 056 Y 057
                     if (user == "LUCAS" && password == process.env.PASSWORD_057) {
                         req.session.loggedin = true;
@@ -121,8 +121,8 @@ module.exports={
                                 req.session.puesto = puesto;
                                 req.session.sucursal = sucursal;
 
-                                var today = new Date();
-                                today = new Date().toDateString().split(" ");
+                                //var today = new Date();
+                                //var today = new Date().toDateString().split(" ");
                                 //console.log("todays date", today);
 
                                 var dateToConsult = moment().format('YYYY-MM-DD');
@@ -168,7 +168,7 @@ module.exports={
         if(req.session.loggedin) {
             var dateToConsult = moment().format('YYYY-MM-DD');
             dateToConsult = dateToConsult.replace(/-/gi, '');
-            console.log(dateToConsult);
+            //console.log(dateToConsult);
             new conexion.Request()
             .input('usr', req.session.nombre_lar)
             .input('dateToConsult', dateToConsult)
@@ -195,7 +195,7 @@ module.exports={
         if(req.session.loggedin) {
             var dateToConsult = moment().format('YYYY-MM-DD');
             dateToConsult = dateToConsult.replace(/-/gi, '');
-            console.log(dateToConsult);
+            //console.log(dateToConsult);
             new conexion.Request()
             .input('usr', req.session.nombre_lar)
             .input('dateToConsult', dateToConsult)
@@ -211,7 +211,7 @@ module.exports={
                     sucursal: req.session.sucursal,
                     tabla: results.recordset
                 }
-                console.log(results.recordset)
+                //console.log(results.recordset)
                 res.render('pages/captura', {data:data});
             });
             /*data = {
@@ -251,7 +251,7 @@ module.exports={
     },
 
     getProductData: function(req, res, next) {
-        console.log('entrando al método getProductData');
+        //console.log('entrando al método getProductData');
         try {
             // OBTENEMOS VALORES CODIGO Y SUCURSAL PARA REALIZAR BÚSQUEDA
             const sucursal = req.session.sucursal;
@@ -260,8 +260,8 @@ module.exports={
             const almC = sucursal+"C";
             const almM = sucursal+"M";
             var code = codigo+"%";
-            console.log('hasta aquí todo bien');
-            console.log(`valores a buscar: ${sucursal} - ${codigo} - ${code} - ${almC} - ${almM}`);
+            //console.log('hasta aquí todo bien');
+            //console.log(`valores a buscar: ${sucursal} - ${codigo} - ${code} - ${almC} - ${almM}`);
             // ACCEDEMOS A LA DB PARA OBTENER DATOS
             new conexion.Request()
             .input('code', code)
@@ -274,10 +274,10 @@ module.exports={
                     WHERE iars.alm = @sucursal AND (iar.art LIKE @code OR iar.des1 LIKE @code OR iar.cve_lar LIKE @code)
                     ORDER BY iar.art ASC`, async(error, results) => {
                 // SI HEMOS OBTENIDO 1 O MÁS RESULTADOS EN NUESTRA BÚQUEDA, CONTINUAMOS, CASO CONTRARIO ES QUE NO HAY COINCIDENCIAS
-                console.log('seguimos bien');
+                //console.log('seguimos bien');
                 if (results.rowsAffected>0) {
-                    console.log("5. results: ");
-                    console.log('rowsAffected > 0');
+                    //console.log("5. results: ");
+                    //console.log('rowsAffected > 0');
                     // DEFINIMOS VARIABLE CON DATOS QUE OCUPAREMOS MÁS ADELANTE
                     const dataTemp = {
                         codigo: results.recordsets[0][0].CveArt,
@@ -294,13 +294,13 @@ module.exports={
                     .input('almm', almM)
                     .query(`SELECT * FROM resumendos 
                             WHERE Codigo = @codigo AND subalm IN (@almc, @almm)`, async(error, results) => {
-                        console.log('y todo sigue bien');
+                        //console.log('y todo sigue bien');
                         // SI OBTENEMOS MÁS DE UN RESULTADO ES PORQUE TIENE VALORES EN ALMACÉN C Y M
                         if (results.rowsAffected > 1) {
-                            console.log('aún bien');
+                            //console.log('aún bien');
                             //var datos = results.recordsets;
-                            console.log('datos');
-                            console.log('rowsAffected > 1');
+                            //console.log('datos');
+                            //console.log('rowsAffected > 1');
                             // SUMAMOS LOS VALORES EN ALMACÉN C Y M PARA OBTENER EL PROMEDIO FINAL
                             var promedio = results.recordsets[0][0].PromUnidades + results.recordsets[0][1].PromUnidades;
                             promedio = Math.round(promedio * 10000) / 10000;
@@ -322,7 +322,7 @@ module.exports={
                             res.send({data:data});
                         // SI SÓLO ES UN RESULTADO ES PORQUE SÓLO TIENEN VALORES EN C Ó EN M, APLICAMOS DIRECTO EL VALOR
                         } else if (results.rowsAffected == 1) {
-                            console.log('rowsAffected = 1');
+                            //console.log('rowsAffected = 1');
                             const data = {
                                 nombre_lar: req.session.nombre_lar,
                                 puesto: req.session.puesto,
@@ -339,9 +339,9 @@ module.exports={
                             // ENVIAMOS LA INFORMACIÓN
                             res.send({data:data});
                         } else {
-                            console.log('método getProductData');
-                            console.log('rowAffected < 1 || rowsAffected = 0');
-                            console.log('no hay promedio, entonces se envía 0');
+                            //console.log('método getProductData');
+                            //console.log('rowAffected < 1 || rowsAffected = 0');
+                            //console.log('no hay promedio, entonces se envía 0');
                             const data = {
                                 nombre_lar: req.session.nombre_lar,
                                 puesto: req.session.puesto,
@@ -362,8 +362,7 @@ module.exports={
                     //getPromedioVentas(data);
                     //res.send({data:data});
                 } else {
-                    //TODO: Enviar un SweetAlert que diga "Sin existencias"
-                    console.log('no hay existencias')
+                    //console.log('no hay existencias')
                     const data = {
                         nombre_lar: req.session.nombre_lar,
                         puesto: req.session.puesto,
@@ -375,42 +374,42 @@ module.exports={
                 }
 
                 if (error) {
-                    console.log('hay errores en el primer query');
+                    console.log('hay errores en el primer query - método getProductData');
                     console.log(error);
                 }
             });
         } catch (error) {
-            console.log('hay errores en el try catch');
+            console.log('hay errores en el try catch - método getProductData');
             console.log(error);
         }
         
     },
 
     getTopTenProductsData: function(req, res) {
-        console.log('entrando en método para buscar top 6 artículos');
+        //console.log('entrando en método para buscar top 10 artículos');
         // OBTENEMOS VALORES CODIGO Y SUCURSAL PARA REALIZAR BÚSQUEDA
         const sucursal = req.session.sucursal;
         const codigo = req.body.searchValue;
         // CONFIGURAMOS ALMC, ALMM Y CODE PARA QUE FUNCIONEN COMO CALUSULAS WHERE PARA DEFINIR LA BÚSQUEDA
-        const almC = sucursal+"C";
-        const almM = sucursal+"M";
+        //const almC = sucursal+"C";
+        //const almM = sucursal+"M";
         var code = codigo+"%";
         // ACCEDEMOS A LA DB PARA OBTENER DATOS
         new conexion.Request()
         .input('code', code)
         .input('sucursal', sucursal)
-        .query(`SELECT DISTINCT TOP 6
+        .query(`SELECT DISTINCT TOP 10
                 iar.art CveArt, iars.alm Almacen, iar.des1 Descripcion
                 FROM inviar iar
                 JOIN invars iars ON iar.art = iars.cve_art
                 WHERE iars.alm = @sucursal AND (iar.art LIKE @code OR iar.des1 LIKE @code OR iar.cve_lar LIKE @code)
                 ORDER BY iar.art ASC`, async(error, results) => {
             // SI HEMOS OBTENIDO 1 O MÁS RESULTADOS EN NUESTRA BÚQUEDA, CONTINUAMOS, CASO CONTRARIO ES QUE NO HAY COINCIDENCIAS
-            console.log('query ejecutado');
+            //console.log('query ejecutado');
 
             if (results.rowsAffected>0) {
-                console.log('getTopTenProductsData - rowsAffected > 0');
-                console.log("4. results: ");
+                //console.log('getTopTenProductsData - rowsAffected > 0');
+                //console.log("4. results: ");
                 //console.log(results);
                 // DEFINIMOS VARIABLE CON DATOS QUE OCUPAREMOS MÁS ADELANTE
                 const data = {
@@ -421,13 +420,12 @@ module.exports={
                 // ENVIAMOS LA INFORMACIÓN
                 res.send({data:data});
             } else {
-                console.log('getTopTenProductsData - rowsAffected <= 0');
+                //console.log('getTopTenProductsData - rowsAffected <= 0');
                 const data = {
                     hayCoincidencias: false,
                     msg: 'No hay coincidencias'
                 }
                 res.send({data:data});
-                //TODO: Enviar un SweetAlert que diga "Sin existencias"
             }
 
             
@@ -435,13 +433,13 @@ module.exports={
     },
 
     getProductDataById: function(req, res) {
-        console.log('método getProductDataById');
+        //console.log('método getProductDataById');
         const sucursal = req.session.sucursal;
         const codigo = req.body.searchValue;
         const alm = req.body.alm;
-        console.log("cve_art seleccionado: "+codigo);
-        console.log("sucursal seleccionado: "+sucursal);
-        console.log("alm seleccionado: "+alm);
+        //console.log("cve_art seleccionado: "+codigo);
+        //console.log("sucursal seleccionado: "+sucursal);
+        //console.log("alm seleccionado: "+alm);
         new conexion.Request()
         .input('codigo', codigo)
         .input('sucursal', sucursal)
@@ -452,9 +450,9 @@ module.exports={
         JOIN invars iars ON iar.art = iars.cve_art
         WHERE iars.alm = @sucursal AND iar.art = @codigo 
         ORDER BY iar.art`, async(error, results) => {
-            console.log('entró al primer select');
+            //console.log('entró al primer select');
             if(results.rowsAffected>0) {
-                console.log('primer select - rowsAffected > 0');
+                //console.log('primer select - rowsAffected > 0');
                 const dataTemp = {
                     codigo: results.recordsets[0][0].CveArt,
                     existenciaAlmC: results.recordsets[0][0].Existencia,
@@ -470,13 +468,13 @@ module.exports={
                 .input('almm', dataTemp.almacen+'M')
                 .query(`SELECT * FROM resumendos 
                         WHERE Codigo = @codigo AND subalm IN (@almc, @almm)`, async(error, results) => {
-                    console.log('entró al segundo select');
+                    //console.log('entró al segundo select');
                     //console.log(results);
                     // SI OBTENEMOS MÁS DE UN RESULTADO ES PORQUE TIENE VALORES EN ALMACÉN C Y M
                     if (results.rowsAffected > 1) {
-                        console.log('segundo select - rowsAffected > 1');
-                        var datos = results.recordsets;
-                        console.log('datos');
+                        //console.log('segundo select - rowsAffected > 1');
+                        //var datos = results.recordsets;
+                        //console.log('datos');
                         //console.log(datos);
                         // SUMAMOS LOS VALORES EN ALMACÉN C Y M PARA OBTENER EL PROMEDIO FINAL
                         var promedio = results.recordsets[0][0].PromUnidades + results.recordsets[0][1].PromUnidades;
@@ -515,9 +513,9 @@ module.exports={
                         // ENVIAMOS LA INFORMACIÓN
                         res.send({data:data});
                     } else {
-                        console.log('método getProductDataById');
-                        console.log('rowAffected < 1 || rowsAffected = 0');
-                        console.log('no hay promedio, entonces se envía 0');
+                        //console.log('método getProductDataById');
+                        //console.log('rowAffected < 1 || rowsAffected = 0');
+                        //console.log('no hay promedio, entonces se envía 0');
                         const data = {
                             nombre_lar: req.session.nombre_lar,
                             puesto: req.session.puesto,
@@ -541,7 +539,7 @@ module.exports={
 
     guardarDatosMM: function(req, res) {
         if(req.session.loggedin) {
-            console.log('entrando en el método para guardar datos');
+            //console.log('entrando en el método para guardar datos');
             const codigo = req.body.cCodigo;
             const descripcion = req.body.cDescripcion;
             const promedio = req.body.cPromedio;
@@ -555,12 +553,12 @@ module.exports={
             const minPzsM = req.body.cMinPzsM;
             const maxCjsMWanted = req.body.cMaxCjsMWanted;
             const minPzsMWanted = req.body.cMinPzsMWanted;
-            const alm = req.body.cAlm;
+            //const alm = req.body.cAlm;
             var date = moment().format('YYYY-MM-DD HH:mm:ss');
-            console.log(date);
+            //console.log(date);
             var dateToConsult = moment().format('YYYY-MM-DD');
             dateToConsult = dateToConsult.replace(/-/gi, '');
-            console.log(dateToConsult);
+            //console.log(dateToConsult);
 
             // ANTES DE INCERTAR EL REGISTRO VALIDAMOS QUE NO EXISTA NINGÚN REGISTRO PARA 
             // ESE ARTÍCULO EN LA MISMA FECHA
@@ -624,31 +622,34 @@ module.exports={
                                         null, 
                                         null,
                                         '0')`, async(err, result) => {
-                                console.log('Se insertó, creo');
-                                console.log(codigo);
-                                console.log(descripcion);
-                                console.log(promedio.trim());
-                                console.log(canasta);
-                                console.log(catalogo);
-                                console.log(maxCjsC);
-                                console.log(minCjsC);
-                                console.log(maxCjsM);
-                                console.log(minPzsM);
-                                console.log(date);
-                                console.log(req.session.nombre_lar);
-                                console.log(req.session.sucursal);
-                                console.log(result);
-                                const data = {
-                                    nombre_lar: req.session.nombre_lar,
-                                    puesto: req.session.puesto,
-                                    sucursal: req.session.sucursal,
-                                    addToList: true,
-                                    alert: true,
-                                    alertTitle: "¡Guardado!",
-                                    alertText: "Producto agregado correctamente",
-                                    alertIcon: "success"
+
+                                if (result.rowsAffected > 0) {
+                                    console.log('Se insertó, creo');
+                                    console.log(result);
+                                    const data = {
+                                        nombre_lar: req.session.nombre_lar,
+                                        puesto: req.session.puesto,
+                                        sucursal: req.session.sucursal,
+                                        addToList: true,
+                                        alert: true,
+                                        alertTitle: "¡Guardado!",
+                                        alertText: "Producto agregado correctamente",
+                                        alertIcon: "success"
+                                    }
+                                    res.send({data:data});
+                                } else {
+                                    const data = {
+                                        nombre_lar: req.session.nombre_lar,
+                                        puesto: req.session.puesto,
+                                        sucursal: req.session.sucursal,
+                                        addToList: false,
+                                        alert: true,
+                                        alertTitle: "¡Error!",
+                                        alertText: "¡Ocurrió un error inesperado al guardar el producto!",
+                                        alertIcon: "error"
+                                    }
+                                    res.send({data:data});
                                 }
-                                res.send({data:data});
                             });
                         }
                     });
@@ -672,10 +673,10 @@ module.exports={
             const maxCjsMWanted = req.body.cMaxCjsMWanted;
             const minPzsMWanted = req.body.cMinPzsMWanted;
             var date = moment().format('YYYY-MM-DD HH:mm:ss');
-            console.log(date);
+            //console.log(date);
             var dateToConsult = moment().format('YYYY-MM-DD');
             dateToConsult = dateToConsult.replace(/-/gi, '');
-            console.log(dateToConsult);
+            //console.log(dateToConsult);
 
             new conexion.Request()
             .input('usr', req.session.nombre_lar)
@@ -701,18 +702,20 @@ module.exports={
                     mod_max_cjs_m = @maxCjsMWanted, mod_min_pzs_m = @minPzsMWanted,
                     fec_cre = @date, estatus = '3'
                     WHERE id = @codigo AND sucursal = @sucursal AND fec_cre >= @dateToConsult`, async(err, result) => {
-                console.log('Se actualizó, creo');
-                console.log(result);
-                const data = {
-                    nombre_lar: req.session.nombre_lar,
-                    puesto: req.session.puesto,
-                    sucursal: req.session.sucursal,
-                    alert: true,
-                    alertTitle: "¡Guardado!",
-                    alertText: "Producto agregado correctamente",
-                    alertIcon: "success"
+                if (result.rowsAffected > 0) {
+                    console.log('Se actualizó, creo');
+                    //console.log(result);
+                    const data = {
+                        nombre_lar: req.session.nombre_lar,
+                        puesto: req.session.puesto,
+                        sucursal: req.session.sucursal,
+                        alert: true,
+                        alertTitle: "¡Guardado!",
+                        alertText: "Producto actualizado correctamente",
+                        alertIcon: "success"
+                    }
+                    res.send({data:data});
                 }
-                res.send({data:data});
             });
         } else {
             res.redirect('/maxmin/');

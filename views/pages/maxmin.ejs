@@ -21,8 +21,8 @@
     <link href="../public_maxmin/src/assets/css/light/apps/contacts.css" rel="stylesheet" type="text/css" />
     <link href="../public_maxmin/src/assets/css/dark/components/modal.css" rel="stylesheet" type="text/css">
     <link href="../public_maxmin/src/assets/css/dark/apps/contacts.css" rel="stylesheet" type="text/css" />
-    <link href="../public_maxmin/src/assets/css/light/elements/infobox.css" rel="stylesheet" type="text/css" />
-    <link href="../public_maxmin/src/assets/css/dark/elements/infobox.css" rel="stylesheet" type="text/css" />
+    <link href="../public_maxmin/src/assets/css/light/elements/infobox.css?v=1.0.0" rel="stylesheet" type="text/css" />
+    <link href="../public_maxmin/src/assets/css/dark/elements/infobox.css?v=1.0.0" rel="stylesheet" type="text/css" />
     <link href="../public_maxmin/css/sugerencias.css" rel="stylesheet" />
     <link href="../public_maxmin/css/tooltip.css" rel="stylesheet" />
     <link href="../public_maxmin/src/assets/css/light/elements/custom-pagination.css" rel="stylesheet" type="text/css" />
@@ -50,8 +50,8 @@
     <link href="../src/assets/css/light/apps/contacts.css" rel="stylesheet" type="text/css" />
     <link href="../src/assets/css/dark/components/modal.css" rel="stylesheet" type="text/css">
     <link href="../src/assets/css/dark/apps/contacts.css" rel="stylesheet" type="text/css" />
-    <link href="../src/assets/css/light/elements/infobox.css" rel="stylesheet" type="text/css" />
-    <link href="../src/assets/css/dark/elements/infobox.css" rel="stylesheet" type="text/css" />
+    <link href="../src/assets/css/light/elements/infobox.css?v=1.0.0" rel="stylesheet" type="text/css" />
+    <link href="../src/assets/css/dark/elements/infobox.css?v=1.0.0" rel="stylesheet" type="text/css" />
     <link href="../css/sugerencias.css" rel="stylesheet" />
     <link href="../css/tooltip.css" rel="stylesheet" />
     <link href="../src/assets/css/light/elements/custom-pagination.css" rel="stylesheet" type="text/css" />
@@ -69,7 +69,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!--  END GLOBAL STYLES  -->
 
-    <style>
+    <!--style>
         body {
           font-family: Arial, Helvetica, sans-serif;
         }
@@ -94,7 +94,7 @@
           border-top: 8px solid #bbb;
           border-radius: 5px;
         }
-    </style>
+    </style-->
 </head>
 <body class="alt-menu layout-boxed" data-bs-spy="scroll" data-bs-target="#navSection" data-bs-offset="100">
     
@@ -290,17 +290,17 @@
                                 <div class="widget-content widget-content-area">
                                     <div class="modal-content">
                                         <span class="validation-text"></span>
-                                        <div class="input-group mb-3">
+                                        <div class="input-group">
                                             <span class="input-group-text"><i class="bi bi-upc-scan" style="font-size: 1.5rem;"></i></span>
                                             <input type="text" id="c-codigo" name="codigo" class="form-control" placeholder="Buscar artículo" style="text-transform:uppercase" autocomplete="off">
                                             <button class="btn btn-primary" id="search-art" type="button"><i class="bi bi-search"></i></button>
                                         </div>
 
-                                        <select class="sugerencias" name="sugerencias" id="sugerencias" size="5">
+                                        <select class="sugerencias" name="sugerencias" id="sugerencias" size="6">
                                             <option value="" id="" class="sug-option"></option>
                                         </select>
 
-                                        <div class="info-box-3 text-center">
+                                        <div class="info-box-3 text-center mt-3">
                                             <div class="info-box-3-icon">
                                                 <!--svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-coffee"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg-->
                                                 <i class="bi bi-cart" style="font-size: 1.5rem;"></i>
@@ -315,7 +315,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="row">
+                                        <div class="row mt-3">
                                             <div class="col-lg-6 col-md-12 col-sm-12">
                                                 <label for="basic-url" class="form-label">Canasta básica</label>
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
@@ -924,55 +924,55 @@
     <!-- END MAIN CONTAINER -->
     
     <!-- BEGIN UBUNTU SERVER SCRIPTS -->
-    <script src="../public_maxmin/src/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../public_maxmin/src/plugins/src/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-    <script src="../public_maxmin/src/plugins/src/mousetrap/mousetrap.min.js"></script>
-    <script src="../public_maxmin/layouts/vertical-dark-menu/app.js"></script>
-    <script src="../public_maxmin/src/plugins/src/highlight/highlight.pack.js"></script>
-    <script src="../public_maxmin/src/plugins/src/global/vendors.min.js"></script>
-    <script src="../public_maxmin/src/assets/js/custom.js"></script>
-    <script src="../public_maxmin/src/assets/js/scrollspyNav.js"></script>
-    <script src="../public_maxmin/src/plugins/src/jquery-ui/jquery-ui.min.js"></script>
-    <script src="../public_maxmin/src/assets/js/apps/productos.js"></script>
-    <script src="../public_maxmin/scripts/maxmin-validators.js"></script>
-    <script src="../public_maxmin/scripts/search.js"></script>
-    <script src="../public_maxmin/scripts/auto-search.js"></script>
-    <script src="../public_maxmin/scripts/storeMaxMin.js"></script>
-    <script src="../public_maxmin/scripts/edit-maxmin.js"></script>
-    <script src="../public_maxmin/scripts/delete-maxmin.js"></script>
-    <script src="../public_maxmin/src/plugins/src/table/datatable/datatables.js"></script>
-    <script src="../public_maxmin/src/plugins/src/table/datatable/button-ext/dataTables.buttons.min.js"></script>
-    <script src="../public_maxmin/src/plugins/src/table/datatable/button-ext/jszip.min.js"></script>    
-    <script src="../public_maxmin/src/plugins/src/table/datatable/button-ext/buttons.html5.min.js"></script>
-    <script src="../public_maxmin/src/plugins/src/table/datatable/button-ext/buttons.print.min.js"></script>
-    <script src="../public_maxmin/src/plugins/src/table/datatable/custom_miscellaneous.js"></script>
+    <script src="../public_maxmin/src/bootstrap/js/bootstrap.bundle.min.js?v=1.0.0"></script>
+    <script src="../public_maxmin/src/plugins/src/perfect-scrollbar/perfect-scrollbar.min.js?v=1.0.0"></script>
+    <script src="../public_maxmin/src/plugins/src/mousetrap/mousetrap.min.js?v=1.0.0"></script>
+    <script src="../public_maxmin/layouts/vertical-dark-menu/app.js?v=1.0.0"></script>
+    <script src="../public_maxmin/src/plugins/src/highlight/highlight.pack.js?v=1.0.0"></script>
+    <script src="../public_maxmin/src/plugins/src/global/vendors.min.js?v=1.0.0"></script>
+    <script src="../public_maxmin/src/assets/js/custom.js?v=1.0.0"></script>
+    <script src="../public_maxmin/src/assets/js/scrollspyNav.js?v=1.0.0"></script>
+    <script src="../public_maxmin/src/plugins/src/jquery-ui/jquery-ui.min.js?v=1.0.0"></script>
+    <script src="../public_maxmin/src/assets/js/apps/productos.js?v=1.0.0"></script>
+    <script src="../public_maxmin/scripts/maxmin-validators.js?v=1.0.0"></script>
+    <script src="../public_maxmin/scripts/search.js?v=1.0.0"></script>
+    <script src="../public_maxmin/scripts/auto-search.js?v=1.0.0"></script>
+    <script src="../public_maxmin/scripts/storeMaxMin.js?v=1.0.0"></script>
+    <script src="../public_maxmin/scripts/edit-maxmin.js?v=1.0.0"></script>
+    <script src="../public_maxmin/scripts/delete-maxmin.js?v=1.0.0"></script>
+    <script src="../public_maxmin/src/plugins/src/table/datatable/datatables.js?v=1.0.0"></script>
+    <script src="../public_maxmin/src/plugins/src/table/datatable/button-ext/dataTables.buttons.min.js?v=1.0.0"></script>
+    <script src="../public_maxmin/src/plugins/src/table/datatable/button-ext/jszip.min.js?v=1.0.0"></script>    
+    <script src="../public_maxmin/src/plugins/src/table/datatable/button-ext/buttons.html5.min.js?v=1.0.0"></script>
+    <script src="../public_maxmin/src/plugins/src/table/datatable/button-ext/buttons.print.min.js?v=1.0.0"></script>
+    <script src="../public_maxmin/src/plugins/src/table/datatable/custom_miscellaneous.js?v=1.0.0"></script>
     <!--script src="../public_maxmin/scripts/habilitate-mm-button.js"></script-->
     <!-- END UBUNTU SERVER SCRIPTS -->
 
     <!-- BEGIN DEV LOCAL SCRIPTS -->
-    <!--script src="../src/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../src/plugins/src/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-    <script src="../src/plugins/src/mousetrap/mousetrap.min.js"></script>
-    <script src="../layouts/vertical-dark-menu/app.js"></script>
-    <script src="../src/plugins/src/highlight/highlight.pack.js"></script>
-    <script src="../src/plugins/src/global/vendors.min.js"></script>
-    <script src="../src/assets/js/custom.js"></script>
-    <script src="../src/assets/js/scrollspyNav.js"></script>
-    <script src="../src/plugins/src/jquery-ui/jquery-ui.min.js"></script>
-    <script src="../src/assets/js/apps/productos.js"></script>
-    <script src="../scripts/maxmin-validators.js"></script>
-    <script src="../scripts/search.js"></script>
-    <script src="../scripts/auto-search.js"></script>
-    <script src="../scripts/storeMaxMin.js"></script>
-    <script src="../scripts/edit-maxmin.js"></script>
-    <script src="../scripts/delete-maxmin.js"></script>
-    <script src="../scripts/checkbox-maxmin.js"></script>
-    <script src="../src/plugins/src/table/datatable/datatables.js"></script>
-    <script src="../src/plugins/src/table/datatable/button-ext/dataTables.buttons.min.js"></script>
-    <script src="../src/plugins/src/table/datatable/button-ext/jszip.min.js"></script>
-    <script src="../src/plugins/src/table/datatable/button-ext/buttons.html5.min.js"></script>
-    <script src="../src/plugins/src/table/datatable/button-ext/buttons.print.min.js"></script>
-    <script src="../src/plugins/src/table/datatable/custom_miscellaneous.js"></script-->
+    <!--script src="../src/bootstrap/js/bootstrap.bundle.min.js?v=1.0.0"></script>
+    <script src="../src/plugins/src/perfect-scrollbar/perfect-scrollbar.min.js?v=1.0.0"></script>
+    <script src="../src/plugins/src/mousetrap/mousetrap.min.js?v=1.0.0"></script>
+    <script src="../layouts/vertical-dark-menu/app.js?v=1.0.0"></script>
+    <script src="../src/plugins/src/highlight/highlight.pack.js?v=1.0.0"></script>
+    <script src="../src/plugins/src/global/vendors.min.js?v=1.0.0"></script>
+    <script src="../src/assets/js/custom.js?v=1.0.0"></script>
+    <script src="../src/assets/js/scrollspyNav.js?v=1.0.0"></script>
+    <script src="../src/plugins/src/jquery-ui/jquery-ui.min.js?v=1.0.0"></script>
+    <script src="../src/assets/js/apps/productos.js?v=1.0.0"></script>
+    <script src="../scripts/maxmin-validators.js?v=1.0.0"></script>
+    <script src="../scripts/search.js?v=1.0.0"></script>
+    <script src="../scripts/auto-search.js?v=1.0.0"></script>
+    <script src="../scripts/storeMaxMin.js?v=1.0.0"></script>
+    <script src="../scripts/edit-maxmin.js?v=1.0.0"></script>
+    <script src="../scripts/delete-maxmin.js?v=1.0.0"></script>
+    <script src="../scripts/checkbox-maxmin.js?v=1.0.0"></script>
+    <script src="../src/plugins/src/table/datatable/datatables.js?v=1.0.0"></script>
+    <script src="../src/plugins/src/table/datatable/button-ext/dataTables.buttons.min.js?v=1.0.0"></script>
+    <script src="../src/plugins/src/table/datatable/button-ext/jszip.min.js?v=1.0.0"></script>
+    <script src="../src/plugins/src/table/datatable/button-ext/buttons.html5.min.js?v=1.0.0"></script>
+    <script src="../src/plugins/src/table/datatable/button-ext/buttons.print.min.js?v=1.0.0"></script>
+    <script src="../src/plugins/src/table/datatable/custom_miscellaneous.js?v=1.0.0"></script-->
     <!--script src="../scripts/habilitate-mm-button.js"></script-->
     <!-- END DEV LOCAL SCRIPTS -->
 
