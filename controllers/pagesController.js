@@ -12,7 +12,7 @@ module.exports={
             .input('sucursal', req.session.sucursal)
             .input('dateToConsult', dateToConsult)
             .query(`SELECT * FROM cap_maxmin 
-                    WHERE sucursal = @sucursal AND estatus IN ('0', '3') AND fec_cre >= @dateToConsult`, async(error, results) => {
+                    WHERE sucursal = @sucursal AND estatus IN ('0', '3') AND fec_cre >= @dateToConsult ORDER BY id DESC`, async(error, results) => {
                 data = {
                     nombre_lar: req.session.nombre_lar,
                     puesto: req.session.puesto,
@@ -61,7 +61,7 @@ module.exports={
                         .input('dateToConsult', dateToConsult)
                         .input('sucursal', "057")
                         .query(`SELECT * FROM cap_maxmin 
-                                WHERE sucursal = @sucursal AND estatus IN ('0', '3') AND fec_cre >= @dateToConsult`, async(error, results) => {
+                                WHERE sucursal = @sucursal AND estatus IN ('0', '3') AND fec_cre >= @dateToConsult ORDER BY id DESC`, async(error, results) => {
                             data = {
                                 nombre_lar: "LUCAS",
                                 puesto: "GTEOPE",
@@ -134,7 +134,7 @@ module.exports={
                                 .input('dateToConsult', dateToConsult)
                                 .input('sucursal', sucursal)
                                 .query(`SELECT * FROM cap_maxmin 
-                                        WHERE sucursal = @sucursal AND estatus IN ('0', '3') AND fec_cre >= @dateToConsult`, async(error, results) => {
+                                        WHERE sucursal = @sucursal AND estatus IN ('0', '3') AND fec_cre >= @dateToConsult ORDER BY id DESC`, async(error, results) => {
                                     data = {
                                         nombre_lar: nombre_lar,
                                         puesto: puesto,
@@ -146,7 +146,7 @@ module.exports={
                                         alertIcon: "success",
                                         alertButton: "Ok"
                                     }
-                                    //console.log(results.recordset);
+                                    console.log(results.recordset);
                                     //console.log('length: '+results.recordset.length);
                                     res.render('pages/maxmin', {data:data});
                                 });
@@ -177,7 +177,7 @@ module.exports={
                     WHERE sucursal = @sucursal 
                     AND estatus IN ('0', '3') 
                     AND fec_cre >= @dateToConsult
-                    ORDER BY ID`, async(error, results) => {
+                    ORDER BY id DESC`, async(error, results) => {
                 data = {
                     nombre_lar: req.session.nombre_lar,
                     puesto: req.session.puesto,
@@ -204,7 +204,7 @@ module.exports={
                     WHERE sucursal = @sucursal 
                     AND estatus IN ('0', '3') 
                     AND fec_cre >= @dateToConsult
-                    ORDER BY id`, async(error, results) => {
+                    ORDER BY id DESC`, async(error, results) => {
                 data = {
                     nombre_lar: req.session.nombre_lar,
                     puesto: req.session.puesto,
@@ -245,6 +245,34 @@ module.exports={
                 sucursal: req.session.sucursal
             }
             res.render('pages/rebajas', {data:data});
+        } else {
+            res.redirect('/maxmin/');
+        }
+    },
+
+    updateTablaMaxmin:function (req,res) {
+        if(req.session.loggedin) {
+            var dateToConsult = moment().format('YYYY-MM-DD');
+            dateToConsult = dateToConsult.replace(/-/gi, '');
+            //console.log(dateToConsult);
+            new conexion.Request()
+            .input('usr', req.session.nombre_lar)
+            .input('dateToConsult', dateToConsult)
+	        .input('sucursal', req.session.sucursal)
+            .query(`SELECT * FROM cap_maxmin 
+                    WHERE sucursal = @sucursal 
+                    AND estatus IN ('0', '3') 
+                    AND fec_cre >= @dateToConsult
+                    ORDER BY id ASC`, async(error, results) => {
+                data = {
+                    nombre_lar: req.session.nombre_lar,
+                    puesto: req.session.puesto,
+                    sucursal: req.session.sucursal,
+                    tabla: results.recordset
+                }
+                res.send({data: results.recordset});
+                //res.render('pages/maxmin', {data:results.recordset});
+            });
         } else {
             res.redirect('/maxmin/');
         }
@@ -661,22 +689,26 @@ module.exports={
     editarDatosMM: function(req, res) {
         if(req.session.loggedin) {
             console.log('entrando en el método para actualizar datos');
-            const codigo = req.body.cCodigo;
-            const canasta = req.body.cCanasta;
-            const catalogo = req.body.cCatalogo;
-            const maxCjsC = req.body.cMaxCjsC;
-            const minCjsC = req.body.cMinCjsC;
-            const maxCjsM = req.body.cMaxCjsM;
-            const minPzsM = req.body.cMinPzsM;
-            const maxCjsCWanted = req.body.cMaxCjsCWanted;
-            const minCjsCWanted = req.body.cMinCjsCWanted;
-            const maxCjsMWanted = req.body.cMaxCjsMWanted;
-            const minPzsMWanted = req.body.cMinPzsMWanted;
+            const codigo = req.body.cCodigo.trim();
+            const canasta = req.body.cCanasta.trim();
+            const catalogo = req.body.cCatalogo.trim();
+            const maxCjsC = req.body.cMaxCjsC.trim();
+            const minCjsC = req.body.cMinCjsC.trim();
+            const maxCjsM = req.body.cMaxCjsM.trim();
+            const minPzsM = req.body.cMinPzsM.trim();
+            const maxCjsCWanted = req.body.cMaxCjsCWanted.trim();
+            const minCjsCWanted = req.body.cMinCjsCWanted.trim();
+            const maxCjsMWanted = req.body.cMaxCjsMWanted.trim();
+            const minPzsMWanted = req.body.cMinPzsMWanted.trim();
             var date = moment().format('YYYY-MM-DD HH:mm:ss');
             //console.log(date);
             var dateToConsult = moment().format('YYYY-MM-DD');
             dateToConsult = dateToConsult.replace(/-/gi, '');
             //console.log(dateToConsult);
+            console.log(`Elementos:`);
+            console.log(`codigo: ${codigo} - canasta: ${canasta} - catalogo ${catalogo}`);
+            console.log(`maxCajasC: ${maxCjsC} - minCjsC: ${minCjsC} - maxCjsCWanted ${maxCjsCWanted} - minCjsCWanted: ${minCjsCWanted}`);
+            console.log(`maxCajasM: ${maxCjsM} - minPzsM: ${minPzsM} - maxCjsMWanted ${maxCjsMWanted} - minPzsMWanted: ${minPzsMWanted}`);
 
             new conexion.Request()
             .input('usr', req.session.nombre_lar)
@@ -715,7 +747,7 @@ module.exports={
                         alertIcon: "success"
                     }
                     res.send({data:data});
-                }
+                } 
             });
         } else {
             res.redirect('/maxmin/');

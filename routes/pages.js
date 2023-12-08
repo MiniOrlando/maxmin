@@ -8,6 +8,7 @@ router.post('/maxmin', pagesController.auth);
 router.get('/captura', pagesController.captura);
 router.get('/negada', pagesController.negada);
 router.get('/rebajas', pagesController.rebajas);
+router.get('/updateTablaMaxmin', pagesController.updateTablaMaxmin);
 router.post('/getProductData', pagesController.getProductData);
 router.post('/getTopTenProductsData', pagesController.getTopTenProductsData);
 router.post('/getProductDataById', pagesController.getProductDataById);
