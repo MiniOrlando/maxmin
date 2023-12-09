@@ -278,6 +278,39 @@ module.exports={
         }
     },
 
+    updatePedidos: function (req, res) {
+        if(req.session.loggedin) {
+            var dateToConsult = moment().format('YYYY-MM-DD');
+            dateToConsult = dateToConsult.replace(/-/gi, '');
+            //console.log(dateToConsult);
+            new conexion.Request()
+            .input('usr', req.session.nombre_lar)
+            .input('dateToConsult', dateToConsult)
+            .input('sucursal', req.session.sucursal)
+            .query(`SELECT * FROM cap_ped 
+                    WHERE sucursal = @sucursal 
+                    AND estatus IN ('0', '3') 
+                    AND fec_cre >= @dateToConsult
+                    ORDER BY id ASC`, async(error, results) => {
+                /*data = {
+                    nombre_lar: req.session.nombre_lar,
+                    puesto: req.session.puesto,
+                    sucursal: req.session.sucursal,
+                    tabla: results.recordset
+                }*/
+                //console.log(results.recordset)
+                res.send({data:results.recordset});
+            });
+            /*data = {
+                nombre_lar: req.session.nombre_lar,
+                puesto: req.session.puesto
+            }
+            res.render('pages/captura', {data:data});*/
+        } else {
+            res.redirect('/maxmin/');
+        }
+    },
+
     getProductData: function(req, res, next) {
         //console.log('entrando al método getProductData');
         try {
